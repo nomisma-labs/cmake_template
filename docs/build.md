@@ -94,7 +94,7 @@ Dependencies of a requested target are still built as needed.
 ```bash
 cmake --workflow --preset dev                         # configure, build selected targets, run tests
 cmake --workflow --preset complete                         # same workflow with every app
-cmake --build --preset dev --target example_sandbox_native_module  # one excluded app explicitly
+cmake --build --preset dev --target cmake_template_sandbox_native_module  # one excluded app explicitly
 ```
 
 `any` means every preset; `complete` names the preset that builds every app. For example,

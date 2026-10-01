@@ -8,8 +8,10 @@ example code (`core/example/`, `apps/hello/`, `tests/`) is the worked reference 
 
 ## A library
 
-The repo's main library is named after the repo: target `<repo>`, alias `nom::<repo>`, namespace
-`nom::<repo>`.
+The CMake project names the whole repo; library targets have their own names. A repo's main
+library normally uses the repo name: target `<repo>`, alias `nom::<repo>`, namespace `nom::<repo>`.
+In `cmake_template`, the illustrative library is instead named `example`: the integration test
+uses `find_package(cmake_template)` and links `nom::example`.
 
 1. Put the code in `core/<repo>/`: `<file>.h` and `<file>.cpp`. Code includes the headers as
    `<repo/file.h>`.

@@ -4,9 +4,9 @@
 cmake_minimum_required(VERSION 3.30)
 
 # The version lives only here; releases are tagged v<version> (docs/build.md#versioning).
-project(example
+project(cmake_template
     VERSION 0.1.0
-    DESCRIPTION "cmake_template example library"
+    DESCRIPTION "Nomisma C++ repository template and build-system lab"
     LANGUAGES CXX)
 
 include(cmake/kit/nom_kit.cmake)

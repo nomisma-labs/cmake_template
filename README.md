@@ -69,6 +69,9 @@ On GitHub, "Use this template" (or `gh repo create --template`), then
 
 ## What's inside
 
+The CMake project and installed package are named `cmake_template`. The illustrative library
+is named `example` (`nom::example`); its code and tests exercise the build system.
+
 - **Example library `example`** (`core/example/`): a header-only template, a compiled class, a
   config-like type with a public nlohmann dependency, a macro header, and the wrapper module
   `nom.example`.

@@ -22,7 +22,7 @@ import sys
 
 from sync_template import ROOT, TEMPLATE_OWNED, git, read_template_ref, write_template_ref
 
-TEMPLATE_PROJECT = "example"
+TEMPLATE_PROJECT = "cmake_template"
 # The example code, the lab and the template-only files. Every path must exist.
 REMOVED = [
     "core/example",

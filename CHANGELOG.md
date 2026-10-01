@@ -6,6 +6,8 @@ and versions follow [Semantic Versioning](https://semver.org); how to release:
 
 ## [Unreleased]
 
+## [0.1.0] - 2026-10-02
+
 ### Fixed
 
 - Leave `.template_ref` blank in the unhosted template and require a resolvable template
@@ -24,8 +26,8 @@ and versions follow [Semantic Versioning](https://semver.org); how to release:
   `release`; cleanup is limited to the selected builds. CMake checks each preset's toolchain.
 
 - `nom_app(... BUILD_FOR ...)` selects normal build/install participation; `any` is the default.
-  The `complete` preset is a Debug build with every app, including sandbox experiments; bootstrap and
-  CI cover it. Excluded apps remain explicitly buildable.
+  The `complete` preset is a Debug build with every app, including sandbox experiments;
+  bootstrap covers it. Excluded apps remain explicitly buildable.
 
 - Discover Catch2 and enable testing at the project root before code directories, supporting
   both top-level and inline unit test suites.
