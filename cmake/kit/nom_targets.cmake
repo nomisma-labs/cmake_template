@@ -7,6 +7,24 @@ function(nom_set_warnings target)
     endif()
 endfunction()
 
+# Installed apps and shared libraries locate packaged libraries after prefix relocation.
+function(nom_set_install_library_path target origin_directory)
+    if(APPLE)
+        set(origin "@loader_path")
+    elseif(UNIX)
+        set(origin "$ORIGIN")
+    else()
+        return()
+    endif()
+    file(RELATIVE_PATH relative_libdir "${origin_directory}" "${CMAKE_INSTALL_FULL_LIBDIR}")
+    if(relative_libdir STREQUAL "")
+        set(path "${origin}")
+    else()
+        set(path "${origin}/${relative_libdir}")
+    endif()
+    set_property(TARGET ${target} APPEND PROPERTY INSTALL_RPATH "${path}")
+endfunction()
+
 # nom_lib(<name> [STATIC | SHARED] [SOURCES <files>] [HEADERS <files>] [MODULES <files>] [BASE_DIR <dir>]
 #                 [PUBLIC_DEPS <targets>] [PRIVATE_DEPS <targets>])
 #
@@ -61,6 +79,10 @@ function(nom_lib name)
         endif()
         set_target_properties(${name} PROPERTIES CXX_EXTENSIONS OFF)
         nom_set_warnings(${name})
+        get_target_property(target_type ${name} TYPE)
+        if(target_type STREQUAL "SHARED_LIBRARY" OR target_type STREQUAL "MODULE_LIBRARY")
+            nom_set_install_library_path(${name} "${CMAKE_INSTALL_FULL_LIBDIR}")
+        endif()
     endif()
 endfunction()
 
@@ -92,6 +114,7 @@ function(nom_app name)
         RUNTIME_OUTPUT_DIRECTORY ${PROJECT_BINARY_DIR}/bin
         CXX_EXTENSIONS OFF)
     nom_set_warnings(${target})
+    nom_set_install_library_path(${target} "${CMAKE_INSTALL_FULL_BINDIR}")
 
     if(nom_install AND selected)
         install(TARGETS ${target} RUNTIME DESTINATION ${CMAKE_INSTALL_BINDIR})

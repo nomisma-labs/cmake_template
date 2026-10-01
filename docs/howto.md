@@ -185,3 +185,8 @@ own `CMakeLists.txt`.
 ## A release
 
 See [build.md](build.md#versioning).
+
+Installed apps locate packaged shared libraries relative to their executable directory on
+Unix/macOS. Shared libraries locate sibling packaged libraries in the install library
+directory. These runtime paths follow GNUInstallDirs and remain valid when the complete
+install prefix is moved; system dependencies still need to be installed on the host.

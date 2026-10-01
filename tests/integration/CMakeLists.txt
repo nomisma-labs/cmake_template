@@ -13,6 +13,14 @@ add_test(NAME ${PROJECT_NAME}_app_presets
         --kit ${PROJECT_SOURCE_DIR}/cmake/kit)
 set_tests_properties(${PROJECT_NAME}_app_presets PROPERTIES LABELS integration)
 
+if(UNIX)
+    add_test(NAME ${PROJECT_NAME}_relocation
+        COMMAND ${Python3_EXECUTABLE} ${CMAKE_CURRENT_SOURCE_DIR}/relocation/check.py
+            --cmake ${CMAKE_COMMAND} --compiler ${CMAKE_CXX_COMPILER}
+            --generator "${CMAKE_GENERATOR}" --kit ${PROJECT_SOURCE_DIR}/cmake/kit)
+    set_tests_properties(${PROJECT_NAME}_relocation PROPERTIES LABELS integration)
+endif()
+
 nom_library_usage_tests(library_usage OPTIONS -DLIBRARY_USAGE_IMPORT=${nom_build_modules})
 # The app build must collect its source config into the common build/config tree.
 if(TARGET ${PROJECT_NAME}_hello)
