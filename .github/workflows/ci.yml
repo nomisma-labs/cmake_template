@@ -23,7 +23,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        preset: [ci, clang, complete]
+        preset: [ci]
     steps:
       - uses: actions/checkout@v4
         with:

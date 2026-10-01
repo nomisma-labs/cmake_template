@@ -22,8 +22,7 @@ feature, then emptied by `tools/init_project.py`.
 4. Run the `ci-image` workflow (Actions tab, or push a change under `docker/ci/`). Then make the
    `ci` package public (the organization's Packages page → `ci` → Package settings → Change
    visibility). It holds only public tools, and a public image needs no per-repo access.
-5. Check that the template's own workflows are green: `ci`, and `template`, which creates a repo
-   from the template with `init_project.py` and builds it.
+5. Check that the template's `ci` workflow is green.
 6. Tag the first release, `v0.1.0` ([build.md](build.md#versioning)).
 
 ## Creating a repo
@@ -32,8 +31,7 @@ feature, then emptied by `tools/init_project.py`.
 gh repo create <org>/<name> --private --template <org>/cmake_template --clone
 cd <name>
 python3 tools/init_project.py <name>
-git submodule update --init --recursive
-cmake --workflow --preset dev
+./bootstrap.sh
 git push
 ```
 
@@ -45,7 +43,7 @@ code instead of renaming it:
 
 - deletes the example code (`core/example/`, `apps/hello/`, the example unit tests and the library usage
   test project, the nlohmann submodule), the lab (the sandbox experiments, `docs/lab/`) and the
-  template-only files (`docker/`, the `ci-image` and `template` workflows, and itself);
+  template-only files (`docker/`, the `ci-image` workflow, and itself);
 - deletes the lines and blocks the template marks as template-only;
 - sets the name and version `0.1.0` in `project()`; the options and the package name derive from it;
 - puts the name and a TODO description into `README.md` and `AGENTS.md`, and starts an empty
@@ -55,7 +53,9 @@ code instead of renaming it:
   `--template-url <url>` instead of setting the URL in the template.
 
 It checks everything first and stops without changing anything if the repo doesn't look like a
-fresh copy of the template. Then add code with the recipes in [howto.md](howto.md).
+fresh copy of the template. `./bootstrap.sh` validates the initialized repo locally; its regular
+`ci` workflow validates it on GitHub. The new repo starts without example tests; add your own
+code and tests with the recipes in [howto.md](howto.md), then run bootstrap again.
 
 ## Per-repo settings
 

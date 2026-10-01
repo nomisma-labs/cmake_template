@@ -78,6 +78,6 @@ On GitHub, "Use this template" (or `gh repo create --template`), then
   checks library usage from a separate project and config installation. Use `ctest --preset dev -L unit` or `ctest --preset dev -L integration` to select a group.
 - **Build system:** presets, the CMake kit (`cmake/kit/`), dependencies as submodules in `external/`.
 - **Checks and CI:** SPDX headers, formatting, naming and the release-tag check, on a shared CI
-  image; the `template` workflow creates a repo with `init_project.py` and builds it.
+  image. Validate a newly initialized repo locally with `./bootstrap.sh`.
 - **Lab:** [docs/lab/](docs/lab/README.md).
 <!-- template-only:end -->
