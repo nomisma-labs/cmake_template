@@ -1,0 +1,34 @@
+# SPDX-FileCopyrightText: 2026 Alexey Tkachenko
+# SPDX-License-Identifier: LicenseRef-Nomisma-Labs-Proprietary
+#
+# Template only: creates a repo from this commit the way docs/new_repo.md does, then builds and
+# checks it, so a template change that breaks tools/init_project.py fails here.
+name: template
+
+on:
+  push:
+    branches: [master]
+  pull_request:
+  workflow_dispatch:
+
+jobs:
+  init:
+    name: init_project.py on a fresh copy
+    runs-on: ubuntu-24.04
+    container: ghcr.io/${{ github.repository_owner }}/ci:latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          submodules: recursive
+      - run: git config --global --add safe.directory '*'
+      - name: Create a repo from the template, then build and check it
+        run: |
+          cp -a "$GITHUB_WORKSPACE" "$RUNNER_TEMP/sample"
+          cd "$RUNNER_TEMP/sample"
+          git config user.name ci && git config user.email ci@localhost
+          git remote remove origin # init refuses to run in cmake_template itself
+          python3 tools/init_project.py sample --template-url "$GITHUB_WORKSPACE"
+          cmake --workflow --preset ci
+          python3 tools/check_headers.py
+          tools/check_format.sh
+          tools/check_naming.sh
