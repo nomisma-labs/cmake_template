@@ -25,9 +25,14 @@ uses `find_package(cmake_template)` and links `nom::example`.
        nom_install_package(TARGETS <repo> DEPENDENCIES <packages>)
    endif()
    ```
+
    `DEPENDENCIES` lists the packages a consumer must find first, for example `nlohmann_json`.
 3. Add `add_subdirectory(<repo>)` to `core/CMakeLists.txt`.
 4. Add its unit tests and library usage integration tests (below).
+
+Use `STATIC` or `SHARED` in `nom_lib` to select compiled-library linkage explicitly.
+They are mutually exclusive and require sources or modules. Omitting both preserves
+the `BUILD_SHARED_LIBS` default; headers-only targets remain interface libraries.
 
 A second library is named `<repo>_<name>`; list it in the same `nom_install_package()` call, which
 a repo makes once.

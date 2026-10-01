@@ -18,5 +18,7 @@ RUN apt-get update \
  && apt-get install -y --no-install-recommends \
       g++-15 cmake ninja-build \
       clang-19 clang-tools-19 clang-tidy-19 clang-format-19 clangd-19 \
-      catch2 \
+      catch2 libboost-log-dev libboost-iostreams-dev libboost-filesystem-dev \
+      libboost-system-dev libboost-thread-dev libboost-date-time-dev libboost-program-options-dev libboost-url-dev \
+      libssl-dev libfmt-dev nlohmann-json3-dev zlib1g-dev capnproto libcapnp-dev \
  && rm -rf /var/lib/apt/lists/*

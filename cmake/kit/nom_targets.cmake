@@ -7,20 +7,33 @@ function(nom_set_warnings target)
     endif()
 endfunction()
 
-# nom_lib(<name> [SOURCES <files>] [HEADERS <files>] [MODULES <files>] [BASE_DIR <dir>]
+# nom_lib(<name> [STATIC | SHARED] [SOURCES <files>] [HEADERS <files>] [MODULES <files>] [BASE_DIR <dir>]
 #                 [PUBLIC_DEPS <targets>] [PRIVATE_DEPS <targets>])
 #
 # Creates <name> and its alias nom::<name>. Without SOURCES or MODULES it is an INTERFACE
-# (header-only) library. HEADERS and MODULES become file sets rooted at BASE_DIR (default:
+# (header-only) library. STATIC/SHARED selects compiled linkage explicitly; otherwise
+# BUILD_SHARED_LIBS supplies the default. HEADERS and MODULES become file sets rooted at BASE_DIR (default:
 # <project>/core), so they install under the same path they are included by: <name>/file.h.
 function(nom_lib name)
-    cmake_parse_arguments(PARSE_ARGV 1 arg "" "BASE_DIR" "SOURCES;HEADERS;MODULES;PUBLIC_DEPS;PRIVATE_DEPS")
+    cmake_parse_arguments(PARSE_ARGV 1 arg "STATIC;SHARED" "BASE_DIR" "SOURCES;HEADERS;MODULES;PUBLIC_DEPS;PRIVATE_DEPS")
+    if(arg_STATIC AND arg_SHARED)
+        message(FATAL_ERROR "nom_lib(${name}): STATIC and SHARED are mutually exclusive")
+    endif()
+    if((arg_STATIC OR arg_SHARED) AND NOT (arg_SOURCES OR arg_MODULES))
+        message(FATAL_ERROR "nom_lib(${name}): STATIC/SHARED requires SOURCES or MODULES")
+    endif()
+    set(linkage)
+    if(arg_STATIC)
+        set(linkage STATIC)
+    elseif(arg_SHARED)
+        set(linkage SHARED)
+    endif()
     if(NOT arg_BASE_DIR)
         set(arg_BASE_DIR ${PROJECT_SOURCE_DIR}/core)
     endif()
 
     if(arg_SOURCES OR arg_MODULES)
-        add_library(${name})
+        add_library(${name} ${linkage})
         set(scope PUBLIC)
     else()
         add_library(${name} INTERFACE)
