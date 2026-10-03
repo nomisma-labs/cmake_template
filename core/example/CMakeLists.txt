@@ -12,8 +12,10 @@ nom_lib(example
         counter.cppm
         join.cppm
         settings.cppm
+        types.cppm
+    PUBLIC_DEPS nom::metal
     PRIVATE_DEPS nlohmann_json::nlohmann_json)
 
 if(nom_install)
-    nom_install_package(TARGETS example DEPENDENCIES nlohmann_json)
+    nom_install_package(TARGETS example DEPENDENCIES nlohmann_json nom_metal)
 endif()

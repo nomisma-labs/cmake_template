@@ -6,3 +6,4 @@ export module nom.example;
 export import :counter;
 export import :join;
 export import :settings;
+export import :types;

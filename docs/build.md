@@ -10,8 +10,8 @@ to select one explicitly; `--help` lists the discovered names. For a personal pr
 matching build and test entries that reference its configure preset. CMake checks the compiler
 and generator from the preset rather than bootstrap guessing them from its name.
 Each run deletes only the selected build directories and previous `build/bootstrap/` logs.
-Python compatibility/imports, headers and formatting are always checked; naming runs when `clang` is selected and is
-reported as skipped otherwise. A failed check returns a nonzero exit code. Invalid arguments
+Python compatibility/imports, headers and formatting are always checked; naming is included when
+`clang` is selected. A failed check returns a nonzero exit code. Invalid arguments
 are rejected before cleanup. For everyday incremental work, use the commands below.
 
 ```bash
@@ -142,6 +142,7 @@ run `tools/sync_template.py` in the other repos). The top-level `CMakeLists.txt`
 | `nom_install_package(TARGETS … [DEPENDENCIES …])` | Install rules and `<project>-config.cmake`, so consumers can `find_package(<project>)` and link `nom::<target>`. |
 | `nom_require_submodule(<path>)` | Fails early, with the fix, when a submodule wasn't checked out. |
 | `nom_find_catch2()` | The system Catch2 3, otherwise a pinned download; called at the project root when tests are enabled, before code directories. |
+| `nom_find_metal()` | The retained Metal submodule as `nom::metal`, plus its separate `nom_metal` installed package. |
 
 `nom_c2test` is specific to Catch2. Future test frameworks can have their own helpers
 without changing `nom_lib` or `nom_app`.
@@ -162,6 +163,12 @@ Named modules are part of every Nomisma library build.
 
 ## Dependencies
 
+- **Metal:** the shared foundation includes a submodule pinned to v2.1.4. Call
+  `nom_find_metal()` before adding code directories and link `nom::metal` where its headers are
+  needed. The helper uses only Metal's include directory, leaving its upstream CMake project
+  unconfigured. With installation enabled, it installs a separate `nom_metal` package containing
+  the headers and license. Libraries whose exported targets reference Metal list `nom_metal` in
+  `nom_install_package(DEPENDENCIES …)`, including private dependencies of static libraries.
 - **Our repos:** a git submodule in `external/<name>`, wired with
   `FetchContent_Declare(<name> SOURCE_DIR ${PROJECT_SOURCE_DIR}/external/<name>)` and
   `FetchContent_MakeAvailable(<name>)`. FetchContent keeps the first declaration of a name, so in a
@@ -172,7 +179,7 @@ Named modules are part of every Nomisma library build.
   - nlohmann_json: its own CMake project works as a subproject, so it is used as is (see
     cmake_template's top-level `CMakeLists.txt`). `JSON_Install` follows our install option, so an
     installed package brings nlohmann with it.
-  - Header-only libraries whose CMake project doesn't suit a subproject (metal) are used through
+  - Header-only libraries whose CMake project doesn't suit a subproject are used through
     their include directory only; their CMake project is never run.
 - **System libraries** (Boost, OpenSSL, later): `find_package` only.
 - **Catch2:** `nom_find_catch2()`.

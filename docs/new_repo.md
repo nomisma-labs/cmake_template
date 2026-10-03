@@ -44,6 +44,7 @@ code instead of renaming it:
 - deletes the example code (`core/example/`, `apps/hello/`, the example unit tests and the library usage
   test project, the nlohmann submodule), the lab (the sandbox experiments, `docs/lab/`) and the
   template-only files (`docker/`, the `ci-image` workflow, and itself);
+- retains the Metal v2.1.4 submodule and `nom_find_metal()` call as the shared dependency baseline;
 - deletes the lines and blocks the template marks as template-only;
 - sets the name and version `0.1.0` in `project()`; the options and the package name derive from it;
 - puts the name and a TODO description into `README.md` and `AGENTS.md`, and starts an empty
@@ -105,3 +106,8 @@ The script syncs committed template revisions, not uncommitted working-tree chan
 reviewing an unpublished template change, keep its shared files in the template checkout;
 assess the repo-specific migration separately and perform the recorded sync once the template
 revision is available.
+
+Dependency migrations also update repository-owned files: sync supplies `nom_find_metal()`,
+but existing repos add or retain the Metal submodule in `.gitmodules`, call the helper from their
+top-level `CMakeLists.txt`, and use `nom::metal` in place of local adapters. Public dependency
+declarations in installed packages use `nom_metal`.

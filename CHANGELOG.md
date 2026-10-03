@@ -6,13 +6,23 @@ and versions follow [Semantic Versioning](https://semver.org); how to release:
 
 ## [Unreleased]
 
+## [0.3.0] - 2026-10-03
+
+### Added
+
+- Metal v2.1.4 in the common dependency baseline. Generated repositories retain the pinned
+  submodule and use `nom_find_metal()` and `nom::metal` from the shared kit. Installed packages
+  share the `nom_metal` package, headers and license.
+
 ### Changed
 
+- Include naming checks in bootstrap runs that select `clang`.
 - Define Nomisma library APIs in native named modules. Keep headers for macros and
   third-party integration.
 - Convert `nom.example` to module interfaces, partitions and implementation units. The `hello`
   app, unit tests and both source and installed-package consumers import the same API.
 - Update the shared recipes and conventions so new repositories start with modules.
+- Advance the shared kit identifier to `0.3.0`.
 
 ## [0.2.0] - 2026-10-03
 

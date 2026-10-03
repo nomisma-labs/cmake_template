@@ -9,6 +9,10 @@ Nomisma libraries define their C++ APIs in named modules from the start.
 Headers remain for macros and third-party libraries that need them;
 [the module rules](docs/build.md#modules) describe those boundaries.
 
+Metal v2.1.4 is part of the shared foundation. `nom_find_metal()` exposes its headers through
+`nom::metal`; generated repositories retain the pinned submodule. Installed consumers use the
+`nom_metal` package, which includes those headers and their license.
+
 ## Bootstrap
 
 After installing the tools listed in [docs/build.md](docs/build.md#toolchain), run:
@@ -29,9 +33,8 @@ Unselected build directories are preserved.
 
 Python compatibility/imports, SPDX headers and formatting run every time. The Python check
 verifies version 3.10 or newer, script syntax, and imported modules; no pip packages are
-currently required. Naming runs when `clang` is selected; other
-single-preset runs report it as skipped. Tests include unit suites and integration checks for
-library usage from source and through an installed package. Every step reports `PASS`, `FAIL`
+currently required. Naming is included when `clang` is selected. Tests include unit suites and
+integration checks for library usage from source and through an installed package. Every step reports `PASS`, `FAIL`
 or `SKIP`, followed by a summary and next steps. Failures return a nonzero exit code;
 independent checks continue where possible. Only the current run's logs are kept under
 `build/bootstrap/`. Use the commands in **Build** below for incremental work.

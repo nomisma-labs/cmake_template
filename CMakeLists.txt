@@ -5,7 +5,7 @@ cmake_minimum_required(VERSION 3.30)
 
 # The version lives only here; releases are tagged v<version> (docs/build.md#versioning).
 project(cmake_template
-    VERSION 0.2.0
+    VERSION 0.3.0
     DESCRIPTION "Nomisma C++ repository template and build-system lab"
     LANGUAGES CXX)
 
@@ -14,6 +14,8 @@ nom_project_options()
 
 # Dependencies come from external/ submodules (docs/howto.md#a-dependency). In a superbuild the
 # outermost FetchContent_Declare wins, so every repo shares one copy.
+nom_find_metal()
+
 # template-only:begin
 # nlohmann_json's own CMake project works as a subproject, so it is used as is.
 nom_require_submodule(external/nlohmann_json)

@@ -30,6 +30,7 @@ every mechanism working; `tools/init_project.py` removes it from new repos.
   Catch2 is found at the project root when tests are enabled, before code directories.
 - `tests/integration/`: library usage and installation checks, labeled `integration`.
 - `external/`: git submodules (third-party code pinned to release tags, and our own repos).
+  Metal v2.1.4 is retained as a foundation dependency; `nom_find_metal()` provides `nom::metal`.
 - `cmake/kit/`: the shared CMake kit. `tools/`: checks and repo scripts. `docs/`: documentation.
 
 ## Adding code
@@ -45,6 +46,8 @@ a dependency, an experiment.
 - Every source file starts with the SPDX header; `python3 tools/check_headers.py` checks it.
 - Format with `tools/check_format.sh --fix`.
 - Add targets with the kit (`nom_lib`, `nom_app`, `nom_c2test`), not raw CMake.
+- Link `nom::metal` where Metal headers are needed. For a public dependency, list `nom_metal`
+  in `nom_install_package(DEPENDENCIES …)`; the kit installs its headers and license separately.
 - Template-owned paths (`bootstrap.sh`, `cmake/kit/`, `tools/`, `docs/build.md`, `docs/conventions.md`,
   `docs/howto.md`, `docs/new_repo.md`, `.clang-format`, `.clang-tidy`, `.clangd`, `.editorconfig`,
   `.github/workflows/ci.yml`) change only in cmake_template and reach other repos through

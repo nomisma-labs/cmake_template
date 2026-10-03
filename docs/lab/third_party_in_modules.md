@@ -104,6 +104,25 @@ that every macro-based configuration API can hide its JSON types the same way.
 above with warnings as errors, then validate the intended dependency boundary with both
 supported compilers.
 
+## Metal through a native module
+
+Validated on 2026-10-03 with Metal v2.1.4, GCC 16 and Clang 19, using the toolchain recorded
+above. `nom.example:types` includes Metal's `list`, `at` and `number` headers in its global module
+fragment, then exports `type_at_t<Index, Types...>`. The primary `nom.example` interface
+re-exports that partition. Importing unit tests and both source and installed-package consumers
+instantiate the alias successfully on both compilers; the package consumer rebuilds the module
+interfaces using the installed Metal headers.
+
+This validates a small public template backed by Metal. Full relay-style filtering and dispatch,
+and their compile-time and runtime performance, remain separate investigations.
+
+Metal is retained as a foundation submodule when initializing a repository. `nom_find_metal()`
+provides the shared `nom::metal` header target without configuring Metal's upstream project.
+The separate `nom_metal` package installs the headers and license; a standalone consumer using
+`find_package(nom_metal 2.1.4 EXACT CONFIG REQUIRED)` passes. A two-project build sharing
+`nom::metal` also installs both exported packages successfully. Public users list `nom_metal`
+in `nom_install_package(DEPENDENCIES …)`.
+
 ## Third-party CMake projects as subprojects
 
 The following findings were recorded on 2026-09-28 with CMake 4.4.3.

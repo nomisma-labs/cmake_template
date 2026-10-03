@@ -188,6 +188,16 @@ that other repos rely on.
 
 ## A dependency
 
+- **Metal:** already provided by the template's `nom_find_metal()` call. Use `nom::metal` in
+  `PUBLIC_DEPS` when module interfaces or headers depend on it, or `PRIVATE_DEPS` for an
+  implementation-only dependency. If exported targets reference Metal, list its installed package
+  as a dependency, including for private dependencies of static libraries:
+  ```cmake
+  nom_lib(<name> MODULES <name>.cppm PUBLIC_DEPS nom::metal)
+  if(nom_install)
+      nom_install_package(TARGETS <name> DEPENDENCIES nom_metal)
+  endif()
+  ```
 - **One of our repos:** a submodule with a relative URL, pinned to a release tag:
   ```bash
   git submodule add ../<dep>.git external/<dep>
@@ -211,8 +221,8 @@ that other repos rely on.
   git add .gitmodules external/<dep>
   ```
   Then decide case by case: the same three CMake lines when its CMake project works as a
-  subproject (nlohmann_json in cmake_template), or only its include directory when it doesn't
-  (metal). Use a module wrapper when it gives a useful, supported API boundary; otherwise include
+  subproject (nlohmann_json in cmake_template), or only its include directory when it doesn't.
+  Use a module wrapper when it gives a useful, supported API boundary; otherwise include
   the dependency's headers where needed. Our library APIs belong in named modules.
 - **System libraries** (Boost, OpenSSL, …): `find_package(<Package> REQUIRED)`.
 
