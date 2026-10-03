@@ -5,7 +5,4 @@
 
 # template-only:begin
 add_subdirectory(example)
-if(nom_build_modules)
-    add_subdirectory(example_import)
-endif()
 # template-only:end

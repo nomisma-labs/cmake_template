@@ -1,9 +1,11 @@
 // SPDX-FileCopyrightText: 2026 Alexey Tkachenko
 // SPDX-License-Identifier: LicenseRef-Nomisma-Labs-Proprietary
 
-#include <example/join.h>
-
 #include <catch2/catch_test_macros.hpp>
+
+#include <string>
+
+import nom.example;
 
 TEST_CASE("join formats and separates its arguments", "[join]")
 {

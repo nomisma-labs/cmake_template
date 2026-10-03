@@ -1,9 +1,9 @@
 // SPDX-FileCopyrightText: 2026 Alexey Tkachenko
 // SPDX-License-Identifier: LicenseRef-Nomisma-Labs-Proprietary
 
-#include <example/counter.h>
-
 #include <catch2/catch_test_macros.hpp>
+
+import nom.example;
 
 TEST_CASE("counter counts and resets", "[counter]")
 {

@@ -3,10 +3,6 @@
 #
 # Lab item 1: a native module (no headers) with a partition.
 
-if(NOT nom_build_modules)
-    return()
-endif()
-
 nom_lib(${PROJECT_NAME}_sandbox_geometry
     MODULES geometry.cppm point.cppm
     BASE_DIR ${CMAKE_CURRENT_SOURCE_DIR})

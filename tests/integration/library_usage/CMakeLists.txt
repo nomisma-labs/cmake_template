@@ -12,7 +12,6 @@ set(CMAKE_CXX_STANDARD_REQUIRED ON)
 set(CMAKE_CXX_EXTENSIONS OFF)
 
 set(LIBRARY_USAGE_MODE "package" CACHE STRING "package: find_package(cmake_template); source: FetchContent")
-option(LIBRARY_USAGE_IMPORT "Also test library usage through import nom.example" OFF)
 
 if(LIBRARY_USAGE_MODE STREQUAL "package")
     find_package(cmake_template CONFIG REQUIRED)
@@ -27,9 +26,3 @@ enable_testing()
 add_executable(use_library use_library_test.cxx)
 target_link_libraries(use_library PRIVATE nom::example)
 add_test(NAME use_library COMMAND use_library)
-
-if(LIBRARY_USAGE_IMPORT)
-    add_executable(use_library_import use_library_import_test.cxx)
-    target_link_libraries(use_library_import PRIVATE nom::example)
-    add_test(NAME use_library_import COMMAND use_library_import)
-endif()

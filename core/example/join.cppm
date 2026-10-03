@@ -1,15 +1,17 @@
 // SPDX-FileCopyrightText: 2026 Alexey Tkachenko
 // SPDX-License-Identifier: LicenseRef-Nomisma-Labs-Proprietary
 
-#pragma once
+module;
 
 #include <format>
 #include <string>
 #include <string_view>
 
-namespace nom::example
+export module nom.example:join;
+
+export namespace nom::example
 {
-    // Header-only template: joins formattable values with a separator.
+    // Templates live in module interfaces so importers can instantiate them.
     template <typename... Parts> std::string join([[maybe_unused]] std::string_view separator, const Parts&... parts)
     {
         std::string result;

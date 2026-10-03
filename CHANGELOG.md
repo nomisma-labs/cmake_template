@@ -6,6 +6,14 @@ and versions follow [Semantic Versioning](https://semver.org); how to release:
 
 ## [Unreleased]
 
+### Changed
+
+- Define Nomisma library APIs in native named modules. Keep headers for macros and
+  third-party integration.
+- Convert `nom.example` to module interfaces, partitions and implementation units. The `hello`
+  app, unit tests and both source and installed-package consumers import the same API.
+- Update the shared recipes and conventions so new repositories start with modules.
+
 ## [0.2.0] - 2026-10-03
 
 ### Added

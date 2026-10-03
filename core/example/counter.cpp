@@ -1,7 +1,11 @@
 // SPDX-FileCopyrightText: 2026 Alexey Tkachenko
 // SPDX-License-Identifier: LicenseRef-Nomisma-Labs-Proprietary
 
-#include <example/counter.h>
+module;
+
+#include <cstdint>
+
+module nom.example;
 
 namespace nom::example
 {

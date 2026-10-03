@@ -2,11 +2,13 @@
 // SPDX-License-Identifier: LicenseRef-Nomisma-Labs-Proprietary
 
 // Usage: hello [build/dev/config/hello/settings.json]
-#include <example/counter.h>
-#include <example/join.h>
 #include <example/macros.h>
-#include <example/settings.h>
-#include <example/settings_json.h>
+
+#include <expected>
+#include <filesystem>
+#include <string>
+
+import nom.example;
 
 int main(int argc, char* argv[])
 {
@@ -28,6 +30,6 @@ int main(int argc, char* argv[])
         greetings.increment();
         LPRINT("{}", nom::example::join(" ", "hello,", greeting.name, greetings.value()));
     }
-    LPRINT("settings as JSON: {}", nlohmann::json(greeting).dump());
+    LPRINT("settings as JSON: {}", nom::example::serialize_settings(greeting));
     return 0;
 }

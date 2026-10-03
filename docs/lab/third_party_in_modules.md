@@ -18,7 +18,8 @@ with `-Werror` fails with `-Werror=expose-global-module-tu-local`.
 
 The warning identifies `json_pointer::split` in `detail/json_pointer.hpp:666` exposing the
 TU-local `detail::unescape` helper. The earlier hard error becomes a warning in this snapshot,
-so the existing outside-module JSON mapping remains appropriate for warnings-as-errors CI.
+so exporting nlohmann types remains unsuitable for our warnings-as-errors CI. The template now
+keeps JSON parsing in a private module implementation rather than exporting that dependency.
 
 Probe sources, created in an isolated temporary directory:
 
@@ -80,23 +81,28 @@ Upstream: issue [#4759](https://github.com/nlohmann/json/issues/4759) and PR
 docs also report a separate GCC bug, "redefinition" errors when `nlohmann/json.hpp` is included in
 a module preamble together with other imports, unresolved as of GCC 16
 ([modules page](https://json.nlohmann.me/features/modules/)). The development branch also adds
-its own module (`NLOHMANN_JSON_BUILD_MODULES`, `import nlohmann.json;`).
+its own module (`import nlohmann.json;`).
 
-### Current template workaround
+### Current template boundary
 
-The nlohmann mapping of `settings` lives in `settings_json.h`, a
-public header outside the module. `settings.h` (the type and `load_settings`) stays
-nlohmann-free and is exported by `nom.example`. Files that import `nom.example` and need the JSON
-mapping include `settings_json.h` before the import. nlohmann remains a public dependency, which
-is the case the config repo has with `DEFINE_CONFIG`.
+`nom.example:settings` defines the settings type and declares `parse_settings`,
+`serialize_settings` and `load_settings` using standard-library types. `settings.cpp` includes
+`<nlohmann/json.hpp>` in its global module fragment and implements those services in
+`module nom.example;`. JSON types and mapping details stay inside the implementation; consumers
+import `nom.example` to use these services.
 
-**For the config repo:** keep `config.h` (the `DEFINE_CONFIG` macros) a plain header; retain
-this workaround until the supported compiler configuration accepts the mapping without
-warnings that fail CI.
+nlohmann is a private CMake dependency. It is still listed in the installed package dependencies
+because a static library's exported link interface carries private target references.
 
-**Retest** after relevant compiler or nlohmann upgrades: update the dependency pin when needed, put
-`#include <example/settings_json.h>` into `core/example/example.cppm` and export `to_json`/`from_json`,
-then build and test the `dev` and warnings-as-errors `ci` presets.
+**For macro-based configuration or logging APIs:** macros must remain in headers. Keep our
+types and services in named modules, then choose a header or module wrapper for the
+third-party integration that the macros require. The example's private JSON implementation is
+appropriate when callers only need parsing and serialization services; it does not establish
+that every macro-based configuration API can hide its JSON types the same way.
+
+**Retest** after relevant compiler or nlohmann upgrades using the isolated alias-export probe
+above with warnings as errors, then validate the intended dependency boundary with both
+supported compilers.
 
 ## Third-party CMake projects as subprojects
 

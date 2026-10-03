@@ -21,7 +21,9 @@ if(UNIX)
     set_tests_properties(${PROJECT_NAME}_relocation PROPERTIES LABELS integration)
 endif()
 
-nom_library_usage_tests(library_usage OPTIONS -DLIBRARY_USAGE_IMPORT=${nom_build_modules})
+if(nom_install)
+    nom_library_usage_tests(library_usage)
+endif()
 # The app build must collect its source config into the common build/config tree.
 if(TARGET ${PROJECT_NAME}_hello)
     add_test(NAME ${PROJECT_NAME}_collected_config

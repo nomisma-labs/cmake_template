@@ -1,13 +1,14 @@
 // SPDX-FileCopyrightText: 2026 Alexey Tkachenko
 // SPDX-License-Identifier: LicenseRef-Nomisma-Labs-Proprietary
 
-#include <example/settings.h>
-#include <example/settings_json.h>
-
 #include <catch2/catch_test_macros.hpp>
 
+#include <expected>
 #include <filesystem>
 #include <fstream>
+#include <string>
+
+import nom.example;
 
 namespace
 {
@@ -36,7 +37,14 @@ TEST_CASE("settings report a missing file and invalid JSON", "[settings]")
 TEST_CASE("settings round-trip through JSON", "[settings]")
 {
     const nom::example::settings original{.name = "round", .repeat = 3};
-    const auto restored = nlohmann::json(original).get<nom::example::settings>();
-    CHECK(restored.name == original.name);
-    CHECK(restored.repeat == original.repeat);
+    const auto restored = nom::example::parse_settings(nom::example::serialize_settings(original));
+    REQUIRE(restored);
+    CHECK(restored->name == original.name);
+    CHECK(restored->repeat == original.repeat);
+}
+
+TEST_CASE("settings report incompatible JSON fields", "[settings]")
+{
+    CHECK_FALSE(nom::example::parse_settings(R"({"repeat": "twice"})"));
+    CHECK_FALSE(nom::example::parse_settings("[]"));
 }

@@ -22,7 +22,8 @@ every mechanism working; `tools/init_project.py` removes it from new repos.
 
 ## Layout
 
-- `core/<repo>/`: the library. Headers are included as `<repo/file.h>`; the module is `nom.<repo>`.
+- `core/<repo>/`: the library. Its public API is the named module `nom.<repo>`; module
+  interfaces and partitions use `.cppm`, implementation units use `.cpp`.
 - `apps/<app>/`: executables; optional `config/` is collected into `build/<preset>/config/<app>/` and installed with the app.
 - `apps/sandbox/`: experiments, normally `BUILD_FOR complete`; also buildable explicitly in other presets.
 - `tests/unit/<suite>/` or inline `<code dir>/tests/<suite>/`: Catch2 unit tests, labeled `unit`.
@@ -48,8 +49,10 @@ a dependency, an experiment.
   `docs/howto.md`, `docs/new_repo.md`, `.clang-format`, `.clang-tidy`, `.clangd`, `.editorconfig`,
   `.github/workflows/ci.yml`) change only in cmake_template and reach other repos through
   `tools/sync_template.py`. Don't edit them in a derived repo.
-- Modules: put `#include`s before `import`s, include the std headers you use yourself, and get
-  macros from headers ([docs/build.md](docs/build.md#modules)).
+- Define our C++ library APIs in named modules; apps and tests import them.
+  Keep macros in headers, and use wrappers or headers at third-party boundaries.
+  Put `#include`s before `import`s and include the std
+  headers you use yourself ([docs/build.md](docs/build.md#modules)).
 - The version lives only in `project()`; releases follow [docs/build.md](docs/build.md#versioning).
 - When you change behaviour that a doc describes, update the doc in the same change.
 - Lab work (template only): experiments go in `apps/sandbox/`, findings in `docs/lab/`. <!-- template-only -->

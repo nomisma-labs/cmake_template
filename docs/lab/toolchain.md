@@ -2,12 +2,17 @@
 
 ## 2026-10-03: GCC 16 module and UBSan retest
 
+This section records the wrapper-module layout before the native-module transition. Its target
+names and reproduction commands are historical: `hello_import` and the separate import test
+suite have been replaced by the single importing `hello` app and example unit suite. Use the
+current [build commands](../build.md) to validate the native interfaces and implementation units.
+
 Local environment: Ubuntu 26.04.1 LTS, GCC 16.0.1 experimental snapshot 20260322
 (`g++-16`, Ubuntu package `16-20260322-1ubuntu1`), Clang tools 19.1.7, CMake 4.4.3,
 and Ninja 1.13.2. The targeted probes below use GCC.
 
 The earlier GCC module/UBSan internal compiler error does not reproduce with this GCC 16
-snapshot. The current example library, including `example.cppm`, builds with UBSan. The
+snapshot. The example library at the time, including `example.cppm`, builds with UBSan. The
 `cmake_template_import_tests` test passes (1/1), and `hello_import` runs successfully with the
 expected greetings and JSON output.
 

@@ -5,6 +5,10 @@ The template every Nomisma C++ repo is created from, and the lab where build-sys
 features (modules first) are tried before real repos rely on them.
 <!-- repo-description:end -->
 
+Nomisma libraries define their C++ APIs in named modules from the start.
+Headers remain for macros and third-party libraries that need them;
+[the module rules](docs/build.md#modules) describe those boundaries.
+
 ## Bootstrap
 
 After installing the tools listed in [docs/build.md](docs/build.md#toolchain), run:
@@ -72,12 +76,12 @@ On GitHub, "Use this template" (or `gh repo create --template`), then
 The CMake project and installed package are named `cmake_template`. The illustrative library
 is named `example` (`nom::example`); its code and tests exercise the build system.
 
-- **Example library `example`** (`core/example/`): a header-only template, a compiled class, a
-  config-like type with a public nlohmann dependency, a macro header, and the wrapper module
-  `nom.example`.
-- **Apps:** `hello` through headers and `hello_import` through `import nom.example;`
+- **Example library `example`** (`core/example/`): the native named module `nom.example`, with
+  interface partitions, a template, compiled implementation units, a config-like type, and a
+  macro header. JSON parsing uses a third-party header behind the module API.
+- **Apps:** `hello` through `import nom.example;`
   (`build/dev/bin/hello build/dev/config/hello/settings.json`), and lab experiments in `apps/sandbox/`.
-- **Tests:** `tests/unit/` holds Catch2 suites through headers and `import`; `tests/integration/`
+- **Tests:** `tests/unit/` holds Catch2 suites that import the module; `tests/integration/`
   checks library usage from a separate project and config installation. Use `ctest --preset dev -L unit` or `ctest --preset dev -L integration` to select a group.
 - **Build system:** presets, the CMake kit (`cmake/kit/`), dependencies as submodules in `external/`.
 - **Checks and CI:** SPDX headers, formatting, naming and the release-tag check, on a shared CI

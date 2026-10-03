@@ -1,11 +1,13 @@
 // SPDX-FileCopyrightText: 2026 Alexey Tkachenko
 // SPDX-License-Identifier: LicenseRef-Nomisma-Labs-Proprietary
 
-#pragma once
+module;
 
 #include <cstdint>
 
-namespace nom::example
+export module nom.example:counter;
+
+export namespace nom::example
 {
     class counter
     {

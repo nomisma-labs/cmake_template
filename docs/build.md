@@ -114,8 +114,8 @@ also runs the tests.
 Presets set the shared cache variable `NOM_BUILD_PRESET`. A custom preset inherits its parent's
 selection unless it overrides that variable, so `dev-local` above still selects `dev` apps.
 Without a preset it defaults to `dev`; set `-DNOM_BUILD_PRESET=release` or `complete` when needed.
-This selects apps independently of `CMAKE_BUILD_TYPE`; project options such as `BUILD_APPS`
-and `BUILD_MODULES` still apply. For every app with Clang, use
+This selects apps independently of `CMAKE_BUILD_TYPE`; `<PROJECT>_BUILD_APPS` still controls
+whether the apps directory participates. For every app with Clang, use
 `cmake --preset clang -DNOM_BUILD_PRESET=complete`, then build that preset.
 
 ## compile_commands.json
@@ -135,7 +135,7 @@ run `tools/sync_template.py` in the other repos). The top-level `CMakeLists.txt`
 | Function | What it does |
 |---|---|
 | `nom_project_options()` | The project's options (below). Call it right after `project()`. |
-| `nom_lib(<name> [SOURCES …] [HEADERS …] [MODULES …] [BASE_DIR <dir>] [PUBLIC_DEPS …] [PRIVATE_DEPS …])` | Library `<name>` plus alias `nom::<name>`. Headers and modules become file sets rooted at `BASE_DIR` (default `core/`). Without sources or modules it is header-only (INTERFACE). |
+| `nom_lib(<name> [STATIC \| SHARED] [SOURCES …] [HEADERS …] [MODULES …] [BASE_DIR <dir>] [PUBLIC_DEPS …] [PRIVATE_DEPS …])` | Library `<name>` plus alias `nom::<name>`. `MODULES` lists native interfaces and partitions; `SOURCES` lists implementation units and other compiled sources. File sets are rooted at `BASE_DIR` (default `core/`). Header-only macro or dependency adapters can be INTERFACE targets. |
 | `nom_app(<name> SOURCES … [DEPS …] [BUILD_FOR …])` | Executable target `<project>_<name>`, binary `bin/<name>`; selects default build/install participation by preset; collects an adjacent `config/` directory. |
 | `nom_c2test(<suite> SOURCES … [DEPS …])` | Catch2 executable `<project>_<suite>`, registered with CTest. Needs `nom_find_catch2()`. |
 | `nom_library_usage_tests(<dir> [OPTIONS …])` | Integration tests: build and run a separate project using this library as an installed package and from source (see Tests). |
@@ -153,11 +153,12 @@ line; the CMake files read the variables:
 |---|---|---|---|
 | `<PROJECT>_BUILD_TESTS` | `nom_build_tests` | ON when top level | `tests/` |
 | `<PROJECT>_BUILD_APPS` | `nom_build_apps` | ON when top level | `apps/`, including the sandbox |
-| `<PROJECT>_BUILD_MODULES` | `nom_build_modules` | ON | the C++ modules and the code that imports them |
 | `<PROJECT>_INSTALL` | `nom_install` | ON | install rules and the package config |
 
 In a superbuild each repo brings its own copy of the kit; the first one loaded wins, and a
 different version is reported as a warning.
+
+Named modules are part of every Nomisma library build.
 
 ## Dependencies
 
@@ -200,35 +201,53 @@ This step copies config files; it does not generate or load runtime configuratio
 
 ## Modules
 
-The *wrapper module* pattern: the headers stay the source, and `core/<repo>/<repo>.cppm` includes
-them in its global module fragment and re-exports their API with `export using`. Code can then use
-either `#include <<repo>/…>` or `import nom.<repo>;`. Rules learned so far:
+Nomisma libraries define their C++ APIs in native named modules. The primary interface is
+`core/<repo>/<repo>.cppm`, declaring `export module nom.<repo>;`. Larger APIs can split into
+interface partitions and re-export them from the primary interface. Template definitions live
+in interfaces or partitions; compiled definitions live in `.cpp` implementation units declaring
+`module nom.<repo>;`. Apps and tests use `import nom.<repo>;`.
 
-- Put all `#include`s before the `import`s in a file.
-- A module does not make the std headers it includes visible to importers: include what you use
-  (for example `<string>` to compare `std::string`s).
-- Macros can't be exported; importers include the macro header.
-- Keep headers with recorded third-party module compatibility issues outside the module.
-  The example's JSON header follows the workaround documented in
-  `cmake_template/docs/lab/third_party_in_modules.md`; that note records tested compiler and
-  dependency versions, and the workaround should be retested after upgrades.
-- Installed packages carry the module interface sources (next to the headers); every consumer
-  compiles its own BMIs, which are specific to the compiler and its flags.
-- `<PROJECT>_BUILD_MODULES=OFF` builds everything through headers only.
+Use `MODULES` in `nom_lib()` to declare interfaces and partitions, including for libraries
+consisting entirely of templates. The [module recipe](howto.md#a-module) shows the CMake and
+source layout.
+
+Headers still have specific roles at the boundaries:
+
+- Macros cannot be exported. Keep them in ordinary headers and include them before imports;
+  Catch2 tests follow the same rule for their assertion macros.
+- Include the standard-library headers each file uses (for example `<string>` to compare
+  `std::string`s). A module's global module fragment does not make those declarations visible
+  to importers. `import std;` needs separate toolchain validation.
+- Third-party libraries without suitable module support can be included in a global module
+  fragment, wrapped behind a module API, or used through headers by consumers that need them.
+  Choose the boundary for the dependency and test it on the supported compilers. Keep our
+  public declarations in named modules.
+- Prefer keeping a dependency private when its types are not part of the API. The example's
+  settings implementation uses nlohmann headers privately, while the module exports settings
+  values and parsing/serialization functions. Recorded third-party limitations and historical
+  probes are in `cmake_template/docs/lab/third_party_in_modules.md`.
+
+In module units, put includes in the global module fragment (`module;` followed by the includes),
+before the named module declaration. In ordinary sources, put includes before imports.
+Installed packages carry module interface and partition sources along with any macro headers;
+consumers build their own compiled module interfaces (BMIs), which are specific to the compiler
+and its flags. Package consumption is tested with the same compiler as the package build;
+cross-toolchain binary compatibility is not implied.
 
 ## Tests
 
 - `tests/unit/<suite>/` or inline `<code dir>/tests/<suite>/`: Catch2 unit tests, created with
   `nom_c2test()` and labeled `unit`. The root enables testing and finds Catch2 before processing
-  `core/` and `apps/`, when `nom_build_tests` is enabled. Tests through `import` have their own
-  folder, built only with modules on.
+  `core/` and `apps/`, when `nom_build_tests` is enabled. Suites import the library's primary
+  module; there is one path through the public API.
 - `tests/integration/`: checks involving project boundaries or installation, labeled `integration`.
   `app_presets/` verifies app build/install selection; `library_usage/` is a separate CMake project
   that compiles, links and runs against this library.
   `nom_library_usage_tests()` installs the main project into
   `build/<preset>/tests/integration/library_usage/install`, then builds and runs the test project
   against that package with `find_package` (`<project>_library_usage_package`), and from source
-  through `FetchContent` (`<project>_library_usage_source`).
+  through `FetchContent` (`<project>_library_usage_source`). Both modes compile the same importing
+  consumer, including rebuilding installed module interfaces in package mode.
 
 ```bash
 ctest --preset dev                   # all tests
@@ -246,6 +265,9 @@ cmake --install build/release --prefix /opt/nomisma
 find_package(<project> 0.1 CONFIG REQUIRED)       # with CMAKE_PREFIX_PATH=/opt/nomisma
 target_link_libraries(app PRIVATE nom::<project>)
 ```
+
+The consumer uses `import nom.<project>;` and the supported module-capable compiler, CMake and
+generator listed in [Toolchain](#toolchain).
 
 ## Versioning
 
