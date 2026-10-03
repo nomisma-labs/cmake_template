@@ -6,6 +6,24 @@ and versions follow [Semantic Versioning](https://semver.org); how to release:
 
 ## [Unreleased]
 
+## [0.2.0] - 2026-10-03
+
+### Added
+
+- Explicit `STATIC` and `SHARED` linkage options for `nom_lib()`, allowing mixed library
+  linkage without changing the global `BUILD_SHARED_LIBS` setting.
+- Relocatable Unix installations: installed applications and shared libraries find packaged
+  libraries relative to their own location, with an integration test that moves the install prefix.
+
+### Changed
+
+- GCC-based presets use `g++-16`, with GCC 16 visible in their display names.
+- The CI image and hosted runners use Ubuntu 26.04. The image uses Ubuntu's compiler and build-tool
+  packages instead of the toolchain PPA and Kitware repository.
+- The CI image includes the Boost, OpenSSL, fmt, zlib and Cap'n Proto development dependencies;
+  the removed Boost.System stub package is no longer requested.
+- Advance the shared kit identifier to `0.2.0` so mixed copies report the updated kit's version.
+
 ## [0.1.0] - 2026-10-02
 
 ### Fixed

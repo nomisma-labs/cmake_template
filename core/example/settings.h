@@ -10,7 +10,8 @@
 namespace nom::example
 {
     // A config-like aggregate. Its JSON mapping lives in settings_json.h, outside the module:
-    // GCC 15 can't take nlohmann 3.12 through a module (cmake_template docs/lab/third_party_in_modules.md).
+    // GCC reports a module exposure warning for nlohmann; CI treats warnings as errors.
+    // See cmake_template docs/lab/third_party_in_modules.md for the tested versions.
     struct settings
     {
         std::string name = "world";

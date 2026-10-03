@@ -25,26 +25,31 @@ bin/<app>                                 # run an app
 
 Other presets work the same way in `build/<preset>`. `cmake --workflow --preset <preset>`
 configures, builds and tests in one command; CI uses it.
+After changing the compiler, run `./bootstrap.sh` (or `./bootstrap.sh release` for Release)
+to clear both the main build and the nested integration-test builds that cache the compiler.
 
 ## Toolchain
 
 | Tool | Version | Used for |
 |---|---|---|
-| GCC | 15.2 (`g++-15`) | the main compiler |
+| Ubuntu | 26.04 LTS | development and CI operating system |
+| GCC | 16 (`g++-16`); installed compiler reports 16.0.1, experimental snapshot 20260322, package `16-20260322-1ubuntu1` | the main compiler |
 | Clang tools | 19 (`clang++-19`, `clangd-19`, `clang-tidy-19`, `clang-scan-deps-19`, `clang-format-19`) | second compiler, sanitizers, IDE, checks |
-| CMake | 3.30 or newer (4.4 in use) | build |
+| CMake | 3.30 or newer; 4.4.3 locally, Ubuntu package 4.2.3 for CI | build |
 | Ninja | 1.11 or newer | generator (Makefiles can't build modules) |
-| Python | 3.10 or newer (3.12 in use) | tools and Python integration checks; standard library only |
+| Python | 3.10 or newer; 3.14.4 locally | tools and Python integration checks; standard library only |
 | Catch2 | 3 (system package, or a pinned download) | tests |
 
 Only the versioned Clang names exist on Ubuntu (`clang++-19`, not `clang++`), so presets and
-scripts name them explicitly. The CI image installs the same set.
+scripts name them explicitly. The installed GCC package is a development snapshot rather than
+a final GCC 16 release. The CI image installs the same tools from Ubuntu packages; package
+revisions without explicit pins are resolved when the image is built.
 
 ## Python environment
 
 Repository scripts currently need no third-party Python packages or virtual environment.
 Python 3.10 is the minimum because the scripts use annotations such as `str | None`;
-Python 3.12 is used in the development and CI environments.
+the current local version is recorded in [Toolchain](#toolchain).
 
 `python3 tools/check_python.py` checks the interpreter version, compiles repository Python
 scripts in memory, and checks their imported modules. It discovers tracked and unignored new
@@ -59,12 +64,16 @@ needed by our current naming check.
 
 | Preset | Compiler and build type | Purpose |
 |---|---|---|
-| `dev` | GCC 15, Debug | daily work |
-| `complete` | GCC 15, Debug | every app, including experiments, regardless of its `BUILD_FOR` list |
-| `release` | GCC 15, Release | benchmarks and production builds |
+| `dev` | GCC 16, Debug | daily work |
+| `complete` | GCC 16, Debug | every app, including experiments, regardless of its `BUILD_FOR` list |
+| `release` | GCC 16, Release | benchmarks and production builds |
 | `clang` | Clang 19, Debug | second compiler; its database feeds clangd and clang-tidy |
-| `asan` | Clang 19, Debug, AddressSanitizer + UBSan | memory and undefined-behaviour checks (GCC 15.2 crashes on UBSan with modules) |
-| `ci` | GCC 15, RelWithDebInfo, warnings as errors | CI |
+| `asan` | Clang 19, Debug, AddressSanitizer + UBSan | memory and undefined-behaviour checks |
+| `ci` | GCC 16, RelWithDebInfo, warnings as errors | CI |
+
+Executable names and package versions are recorded in [Toolchain](#toolchain). Historical
+compiler compatibility findings are recorded in `cmake_template/docs/lab/toolchain.md`;
+retest them when changing compiler versions.
 
 Personal presets go in `CMakeUserPresets.json`, which is git-ignored. For example, to build
 against a local checkout of the config repo (see Dependencies):
@@ -199,9 +208,10 @@ either `#include <<repo>/…>` or `import nom.<repo>;`. Rules learned so far:
 - A module does not make the std headers it includes visible to importers: include what you use
   (for example `<string>` to compare `std::string`s).
 - Macros can't be exported; importers include the macro header.
-- Keep headers that pull in third-party code GCC can't take through a module outside the module.
-  nlohmann 3.12 is such a case: GCC 15 rejects it in a module interface (cmake_template's
-  `docs/lab/third_party_in_modules.md`).
+- Keep headers with recorded third-party module compatibility issues outside the module.
+  The example's JSON header follows the workaround documented in
+  `cmake_template/docs/lab/third_party_in_modules.md`; that note records tested compiler and
+  dependency versions, and the workaround should be retested after upgrades.
 - Installed packages carry the module interface sources (next to the headers); every consumer
   compiles its own BMIs, which are specific to the compiler and its flags.
 - `<PROJECT>_BUILD_MODULES=OFF` builds everything through headers only.
