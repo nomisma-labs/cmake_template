@@ -1,7 +1,12 @@
 # SPDX-FileCopyrightText: 2026 Alexey Tkachenko
 # SPDX-License-Identifier: LicenseRef-Nomisma-Labs-Proprietary
 
-nom_lib(example
+# The wheel demonstrates shipping a shared C++ library alongside its Python extension.
+set(example_linkage)
+if(nom_build_python)
+    set(example_linkage SHARED)
+endif()
+nom_lib(example ${example_linkage}
     SOURCES
         counter.cpp
         settings.cpp

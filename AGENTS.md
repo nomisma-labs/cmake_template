@@ -19,6 +19,8 @@ every mechanism working; `tools/init_project.py` removes it from new repos.
 - `cmake --workflow --preset dev` does all three. Other presets: `complete`, `clang`, `asan`, `release`, `ci`.
   `complete` is Debug with every app; `nom_app(... BUILD_FOR dev ci)` limits normal build/install participation.
   Details: [docs/build.md](docs/build.md).
+- Native Python packaging is opt-in: use the pinned environment and wheel test commands in
+  [docs/build.md](docs/build.md#native-python-wheels). Ordinary C++ builds need no packaging tools.
 
 ## Layout
 
@@ -31,12 +33,15 @@ every mechanism working; `tools/init_project.py` removes it from new repos.
 - `tests/integration/`: library usage and installation checks, labeled `integration`.
 - `external/`: git submodules (third-party code pinned to release tags, and our own repos).
   Metal v2.1.4 is retained as a foundation dependency; `nom_find_metal()` provides `nom::metal`.
-- `cmake/kit/`: the shared CMake kit. `tools/`: checks and repo scripts. `docs/`: documentation.
+- `cmake/kit/`: the shared CMake kit; `api/` exposes client helpers, `deps/` provides dependency
+  services, `internal/` holds implementation details, and `templates/` holds package templates.
+  Include only `cmake/kit/nom_kit.cmake`; see [cmake/README.md](cmake/README.md).
+  `tools/`: checks and repo scripts. `docs/`: documentation.
 
 ## Adding code
 
 Follow [docs/howto.md](docs/howto.md): a library, a module, an app, a unit test suite, library usage integration tests,
-a dependency, an experiment.
+a Python package, a dependency, an experiment.
 
 ## Rules
 
@@ -45,7 +50,9 @@ a dependency, an experiment.
 - C++ test sources use `*_test.cxx` in both unit and integration tests; regular sources use `.cpp`.
 - Every source file starts with the SPDX header; `python3 tools/check_headers.py` checks it.
 - Format with `tools/check_format.sh --fix`.
-- Add targets with the kit (`nom_lib`, `nom_app`, `nom_c2test`), not raw CMake.
+- Add targets with the kit (`nom_lib`, `nom_app`, `nom_python_module`, `nom_c2test`), not raw CMake.
+- Python packaging mechanisms belong in the template; derived repos declare package metadata,
+  bindings, dependencies and runtime libraries through the shared facilities.
 - Link `nom::metal` where Metal headers are needed. For a public dependency, list `nom_metal`
   in `nom_install_package(DEPENDENCIES …)`; the kit installs its headers and license separately.
 - Template-owned paths (`bootstrap.sh`, `cmake/kit/`, `tools/`, `docs/build.md`, `docs/conventions.md`,

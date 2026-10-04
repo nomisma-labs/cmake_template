@@ -32,6 +32,12 @@ endif()
 
 add_subdirectory(core)
 
+# template-only:begin
+if(nom_build_python)
+    add_subdirectory(python)
+endif()
+# template-only:end
+
 if(nom_build_apps)
     add_subdirectory(apps)
 endif()

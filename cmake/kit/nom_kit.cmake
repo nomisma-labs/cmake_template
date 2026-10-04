@@ -27,7 +27,18 @@ if(_nom_kit_loaded)
 endif()
 set_property(GLOBAL PROPERTY NOM_KIT_VERSION ${_nom_kit_version})
 
-include(${CMAKE_CURRENT_LIST_DIR}/nom_project.cmake)
-include(${CMAKE_CURRENT_LIST_DIR}/nom_targets.cmake)
-include(${CMAKE_CURRENT_LIST_DIR}/nom_dependencies.cmake)
-include(${CMAKE_CURRENT_LIST_DIR}/nom_install.cmake)
+# Client-facing project, target, testing, installation and Python helpers.
+include(${CMAKE_CURRENT_LIST_DIR}/api/project.cmake)
+include(${CMAKE_CURRENT_LIST_DIR}/api/targets.cmake)
+include(${CMAKE_CURRENT_LIST_DIR}/api/testing.cmake)
+include(${CMAKE_CURRENT_LIST_DIR}/api/install.cmake)
+include(${CMAKE_CURRENT_LIST_DIR}/api/python.cmake)
+
+# Dependency acquisition and adapters.
+include(${CMAKE_CURRENT_LIST_DIR}/deps/submodules.cmake)
+include(${CMAKE_CURRENT_LIST_DIR}/deps/metal.cmake)
+include(${CMAKE_CURRENT_LIST_DIR}/deps/catch2.cmake)
+
+# Implementation utilities shared by the public helpers.
+include(${CMAKE_CURRENT_LIST_DIR}/internal/target_settings.cmake)
+include(${CMAKE_CURRENT_LIST_DIR}/internal/python_runtime.cmake)

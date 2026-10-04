@@ -32,8 +32,9 @@ bootstrap logs, initializes missing submodules, and configures/builds/tests from
 Unselected build directories are preserved.
 
 Python compatibility/imports, SPDX headers and formatting run every time. The Python check
-verifies version 3.10 or newer, script syntax, and imported modules; no pip packages are
-currently required. Naming is included when `clang` is selected. Tests include unit suites and
+verifies version 3.10 or newer, script syntax, and imported modules; ordinary C++ builds require
+no pip packages. Optional [native wheel builds](docs/build.md#native-python-wheels) use a separate
+environment with pinned packaging tools. Naming is included when `clang` is selected. Tests include unit suites and
 integration checks for library usage from source and through an installed package. Every step reports `PASS`, `FAIL`
 or `SKIP`, followed by a summary and next steps. Failures return a nonzero exit code;
 independent checks continue where possible. Only the current run's logs are kept under
@@ -86,6 +87,8 @@ is named `example` (`nom::example`); its code and tests exercise the build syste
   (`build/dev/bin/hello build/dev/config/hello/settings.json`), and lab experiments in `apps/sandbox/`.
 - **Tests:** `tests/unit/` holds Catch2 suites that import the module; `tests/integration/`
   checks library usage from a separate project and config installation. Use `ctest --preset dev -L unit` or `ctest --preset dev -L integration` to select a group.
+- **Python package:** the optional `nomisma_example` wheel exposes the example C++ API and
+  bundles its shared library. Opt-in integration checks cover source and installed-library builds.
 - **Build system:** presets, the CMake kit (`cmake/kit/`), dependencies as submodules in `external/`.
 - **Checks and CI:** SPDX headers, formatting, naming and the release-tag check, on a shared CI
   image. Validate a newly initialized repo locally with `./bootstrap.sh`.

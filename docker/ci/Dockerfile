@@ -9,7 +9,7 @@ ARG DEBIAN_FRONTEND=noninteractive
 
 RUN apt-get update \
  && apt-get install -y --no-install-recommends \
-      ca-certificates git python3 \
+      ca-certificates git python3 python3-venv python3-dev \
       g++-16 cmake ninja-build \
       clang-19 clang-tools-19 clang-tidy-19 clang-format-19 clangd-19 \
       catch2 libboost-log-dev libboost-iostreams-dev libboost-filesystem-dev \

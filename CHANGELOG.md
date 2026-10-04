@@ -6,6 +6,20 @@ and versions follow [Semantic Versioning](https://semver.org); how to release:
 
 ## [Unreleased]
 
+### Changed
+
+- Organize the CMake kit into client helpers (`api/`), dependency services (`deps/`), internal
+  utilities and package templates. Keep `nom_kit.cmake` and existing helper names as the stable
+  interface; document the layout and common helper usage in `cmake/README.md`.
+
+### Added
+
+- Optional Linux Python wheels through scikit-build-core, with shared `nom_python_module()`
+  installation rules and pinned packaging tools kept separate from ordinary C++ builds.
+- An example Python package using the native module API and a bundled shared library, with
+  installed-wheel checks for source-built and imported C++ libraries. Repository initialization
+  removes the example while retaining reusable packaging support.
+
 ## [0.3.0] - 2026-10-03
 
 ### Added
