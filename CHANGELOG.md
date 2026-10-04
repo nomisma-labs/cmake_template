@@ -6,11 +6,14 @@ and versions follow [Semantic Versioning](https://semver.org); how to release:
 
 ## [Unreleased]
 
+## [0.4.0] - 2026-10-04
+
 ### Changed
 
 - Organize the CMake kit into client helpers (`api/`), dependency services (`deps/`), internal
   utilities and package templates. Keep `nom_kit.cmake` and existing helper names as the stable
   interface; document the layout and common helper usage in `cmake/README.md`.
+- Advance the shared kit identifier to `0.4.0`.
 
 ### Added
 
