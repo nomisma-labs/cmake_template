@@ -1,13 +1,13 @@
 # Third-party code with CMake and modules
 
-Updated: 2026-10-03. The current retest and the historical findings below record their
-own tested toolchains.
+Updated: 2026-10-04. The findings below describe the current GCC 16/Clang 19 toolchain.
 
 ## nlohmann_json in a module's global module fragment
 
-### 2026-10-03: GCC 16 retest
+### GCC 16 results
 
-Local environment: Ubuntu 26.04.1 LTS, GCC 16.0.1 experimental snapshot 20260322
+Validated on 2026-10-03. Local environment: Ubuntu 26.04.1 LTS, GCC 16.0.1 experimental snapshot
+20260322
 (`g++-16`, Ubuntu package `16-20260322-1ubuntu1`), Clang tools 19.1.7, CMake 4.4.3,
 and Ninja 1.13.2. This probe uses GCC and the pinned nlohmann_json v3.12.0 submodule.
 
@@ -17,9 +17,8 @@ an importing consumer compiles, links, and successfully parses JSON. Compiling t
 with `-Werror` fails with `-Werror=expose-global-module-tu-local`.
 
 The warning identifies `json_pointer::split` in `detail/json_pointer.hpp:666` exposing the
-TU-local `detail::unescape` helper. The earlier hard error becomes a warning in this snapshot,
-so exporting nlohmann types remains unsuitable for our warnings-as-errors CI. The template now
-keeps JSON parsing in a private module implementation rather than exporting that dependency.
+TU-local `detail::unescape` helper. Exporting nlohmann types is unsuitable for our
+warnings-as-errors CI. The template keeps JSON parsing in a private module implementation.
 
 Probe sources, created in an isolated temporary directory:
 
@@ -58,30 +57,6 @@ g++-16 -std=c++23 -fmodules-ts -Werror -I"$template_source/external/nlohmann_jso
 ```
 
 The first three commands exit 0; the final warnings-as-errors compile exits 1.
-
-### 2026-09-28: Historical findings
-
-Environment: GCC 15.2.0, Clang 19.1.1, CMake 4.4.3.
-
-**Historical result:** GCC 15.2 rejects a module interface whose global module fragment includes
-`<nlohmann/json.hpp>`; Clang 19.1.1 accepts it.
-
-GCC reports `… exposes TU-local entity …`: nlohmann defines helper functions `static` in its
-headers (`detail::unescape`, `detail::little_endianness`, and on the development branch also
-`detail::is_valid_utf8`), and templates that the module makes reachable use them. C++20 forbids
-such exposures, and GCC 15 enforces the rule.
-
-| nlohmann version | GCC 15.2 | Clang 19.1.1 |
-|---|---|---|
-| v3.12.0 (latest release, April 2025) | error | builds |
-| develop at `373005f` (2026-09-27) | error (fewer helpers, still `is_valid_utf8`) | not tried |
-
-Upstream: issue [#4759](https://github.com/nlohmann/json/issues/4759) and PR
-[#4764](https://github.com/nlohmann/json/pull/4764) (C++20 modules support, on develop). nlohmann's
-docs also report a separate GCC bug, "redefinition" errors when `nlohmann/json.hpp` is included in
-a module preamble together with other imports, unresolved as of GCC 16
-([modules page](https://json.nlohmann.me/features/modules/)). The development branch also adds
-its own module (`import nlohmann.json;`).
 
 ### Current template boundary
 
@@ -125,7 +100,7 @@ in `nom_install_package(DEPENDENCIES …)`.
 
 ## Third-party CMake projects as subprojects
 
-The following findings were recorded on 2026-09-28 with CMake 4.4.3.
+The following findings were recorded with CMake 4.4.3.
 
 **metal** (v2.1.4): running its CMake project through `FetchContent_MakeAvailable` adds about
 2,100 targets with generic names (`example`, `bundle`, `doc`), looks for Doxygen and Boost, and

@@ -9,9 +9,9 @@ New repos don't get this folder.
 
 Nomisma library APIs use native named modules. The example exercises
 interfaces, partitions, implementation units and importing consumers; headers remain for macros
-and third-party boundaries. The earlier wrapper/header coexistence experiment is historical.
+and third-party boundaries.
 
-Initial native-module validation on 2026-10-03: fresh `dev`, `complete`, `clang`, `asan`, and `ci`
+Native-module validation on 2026-10-03: fresh `dev`, `complete`, `clang`, `asan`, and `ci`
 builds pass all eight CTest checks per preset, including importing unit tests, source/package
 consumers and installed-library relocation. The full bootstrap passes all 22 checks, including
 formatting, SPDX headers and clang-tidy naming checks. A freshly generated repository also
@@ -23,19 +23,11 @@ source/package consumers that instantiate the exported typelist alias. Generated
 retain the dependency; separate installed-package and shared two-project checks also pass.
 See [the Metal findings](third_party_in_modules.md#metal-through-a-native-module).
 
-Validation before the native-module transition (2026-10-03) used the versions recorded in
-[Build: Toolchain](../build.md#toolchain). Fresh `dev`, `complete`, `clang`, `ci`, and `release`
-builds passed all nine tests per preset; `asan` also passed all nine tests outside the sandbox.
-The separate CI build with Ubuntu's archive CMake passed all nine tests. Targeted probes covered
-the GCC wrapper module with UBSan and nlohmann_json in a module; detailed notes below preserve
-their original reproduction commands and the earlier findings dated 2026-09-28. These counts
-and wrapper-module results describe that earlier layout, not validation of the native migration.
-
 ## Checklist
 
 | # | Topic | Status | Where |
 |---|---|---|---|
-| 1 | Named modules: interfaces, partitions, implementation units, on GCC 16 and Clang 19 | The native main example and generated-repository recipe pass on both compilers. Earlier native partition and wrapper results are recorded separately. | `core/example/`, `apps/sandbox/native_module/`, [toolchain.md](toolchain.md) |
+| 1 | Named modules: interfaces, partitions, implementation units, on GCC 16 and Clang 19 | The native main example and generated-repository recipe pass on both compilers. The sandbox exercises a native interface and partition. | `core/example/`, `apps/sandbox/native_module/`, [toolchain.md](toolchain.md) |
 | 2 | Headers at macro and dependency boundaries | The example keeps macros in a header and includes JSON privately in a module implementation. | `core/example/macros.h`, `core/example/settings.cpp`, [third_party_in_modules.md](third_party_in_modules.md) |
 | 3 | Macros next to a module | Works: the macro header is included beside `import`. | `core/example/macros.h` |
 | 4 | Third-party headers in the global module fragment | Exporting a nlohmann 3.12 alias warns on GCC 16 and fails with `-Werror`; JSON stays private. The exported Metal typelist alias passes on GCC 16 and Clang 19. | [third_party_in_modules.md](third_party_in_modules.md) |
@@ -51,9 +43,6 @@ and wrapper-module results describe that earlier layout, not validation of the n
 
 ## Findings outside the checklist
 
-- **GCC 16 UBSan wrapper-module retest passed.** The earlier GCC 15.2 internal compiler error did not
-  reproduce in the then-current example wrapper module and consumers. The `asan` preset continues to
-  use Clang 19. See the current and historical results in [toolchain.md](toolchain.md).
 - **Importers must include the std headers they use.** A module's global module fragment doesn't
   make those declarations visible to importers: comparing `std::string`s in a file that only
   imports `nom.example` fails until it includes `<string>`.

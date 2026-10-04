@@ -1,75 +1,57 @@
 # Toolchain findings
 
-## 2026-10-03: GCC 16 module and UBSan retest
+Supported tools and versions are recorded in [Build: Toolchain](../build.md#toolchain).
+The presets use GCC 16 for normal builds and Clang 19 for the second compiler and sanitizers.
 
-This section records the wrapper-module layout before the native-module transition. Its target
-names and reproduction commands are historical: `hello_import` and the separate import test
-suite have been replaced by the single importing `hello` app and example unit suite. Use the
-current [build commands](../build.md) to validate the native interfaces and implementation units.
+## Native modules
 
-Local environment: Ubuntu 26.04.1 LTS, GCC 16.0.1 experimental snapshot 20260322
-(`g++-16`, Ubuntu package `16-20260322-1ubuntu1`), Clang tools 19.1.7, CMake 4.4.3,
-and Ninja 1.13.2. The targeted probes below use GCC.
+The `nom.example` primary interface, exported partitions, implementation units and importing
+apps and tests build on GCC 16 and Clang 19. Library usage tests cover both source and installed
+package consumption; installed consumers build their own compiler-specific BMIs. The sandbox
+geometry module exercises a native interface and partition with the `complete` preset.
 
-The earlier GCC module/UBSan internal compiler error does not reproduce with this GCC 16
-snapshot. The example library at the time, including `example.cppm`, builds with UBSan. The
-`cmake_template_import_tests` test passes (1/1), and `hello_import` runs successfully with the
-expected greetings and JSON output.
-
-Commands from the template root, using a separate build directory:
+Run the current module builds and tests from the template root:
 
 ```bash
-cmake --preset dev -B build/gcc16-ubsan \
-  '-DCMAKE_CXX_FLAGS=-fsanitize=undefined -fno-sanitize-recover=undefined -fno-omit-frame-pointer' \
-  -DFETCHCONTENT_FULLY_DISCONNECTED=ON
-cmake --build build/gcc16-ubsan --target example --parallel 2
-cmake --build build/gcc16-ubsan \
-  --target cmake_template_import_tests cmake_template_hello_import --parallel 2
-ctest --test-dir build/gcc16-ubsan --output-on-failure \
-  -R '^cmake_template_import_tests$'
-build/gcc16-ubsan/bin/hello_import build/gcc16-ubsan/config/hello/settings.json
+cmake --workflow --preset dev
+cmake --workflow --preset clang
+cmake --workflow --preset complete
 ```
 
-All commands exit successfully. This retest covers UBSan with the example wrapper module and
-its consumers. The `asan` preset continues to use Clang 19 with both sanitizers.
+## Sanitizers
 
-The separate [nlohmann module retest](third_party_in_modules.md#2026-10-03-gcc-16-retest)
-compiles and runs with a warning, but fails when warnings are errors.
+The `asan` preset uses Clang 19 with AddressSanitizer and UBSan:
+`-fsanitize=address,undefined -fno-sanitize-recover=undefined -fno-omit-frame-pointer`.
+It covers the native-module example and importing consumers.
 
-## 2026-09-28: Historical findings
-
-Environment: GCC 15.2.0 (toolchain PPA), Clang 19.1.1 (Ubuntu 24.04), CMake 4.4.3, Ninja 1.11.1.
-The results in this section describe that earlier environment.
-
-### Modules build with both compilers
-
-A CMake + Ninja project with a named module, a partition, a global module fragment and an exported
-template builds and runs with `g++-15` and `clang++-19`. The template's own module build (wrapper
-module, native module with a partition, installed-module consumer) passes on both.
-
-### Sanitizers: GCC 15.2 crashes on UBSan with modules
-
-| Flags on the module interface | GCC 15.2 | Clang 19 |
-|---|---|---|
-| `-fsanitize=address` | builds | builds |
-| `-fsanitize=undefined` | internal compiler error (`cp/module.cc`, `tree_node`) | builds |
-| `-fsanitize=address,undefined -fno-sanitize-recover=undefined` | internal compiler error | builds, tests pass |
-
-These results originally led to using Clang 19 with both sanitizers in the `asan` preset.
-The GCC 16 UBSan retest above supersedes the earlier failure for its tested configuration.
-
-### compile_commands.json and clang tools
-
-For the same file, the two compilers record different module flags:
-
-```
-g++-15:     g++-15 -std=c++23 -fmodules-ts -fmodule-mapper=…/main.cpp.o.modmap -fdeps-format=p1689r5 … -c main.cpp
-clang++-19: clang++-19 -std=c++23 @…/main.cpp.o.modmap … -c main.cpp
+```bash
+cmake --workflow --preset asan
 ```
 
-clang-tidy-19 runs cleanly over all 12 translation units of the Clang database, module interface
-units and importers included, once the `clang` preset has been built (the BMIs must exist).
-`tools/check_naming.sh` does exactly that.
+## Third-party module boundaries
 
-To do (checklist item 9): clangd-19 with `--experimental-modules-support` in VS Code, and gdb on
-code that imports modules.
+The [third-party findings](third_party_in_modules.md) cover the GCC 16 warning when exporting a
+nlohmann JSON alias and the tested Metal typelist alias on GCC 16 and Clang 19. JSON stays private
+to the settings implementation; Metal supplies the exported typelist machinery.
+
+## compile_commands.json and clang tools
+
+The `dev` and `clang` presets generate compilation databases. For the same importing source,
+`apps/hello/main.cpp`, the compilers record different module flags (other options omitted):
+
+```text
+g++-16 -std=c++23 -fmodules-ts -fmodule-mapper=…/main.cpp.o.modmap -fdeps-format=p1689r5 … -c main.cpp
+clang++-19 -std=c++23 @…/main.cpp.o.modmap … -c main.cpp
+```
+
+Use `build/clang/compile_commands.json` for Clang tools; the GCC database contains module flags
+they cannot use. `.clangd` selects the Clang database for the editor.
+
+`tools/check_naming.sh` configures the `clang` preset with `-DNOM_BUILD_PRESET=complete`, then
+builds it so that module BMIs are available, including those used by sandbox apps. It runs
+`run-clang-tidy-19` over the native module units and importers in `core/`, `apps/` and `tests/`
+using that database. The naming check passes for the current native-module example and
+generated-repository recipe.
+
+clangd-19 with `--experimental-modules-support` in VS Code, and gdb on importing code, remain
+checklist items to validate.
