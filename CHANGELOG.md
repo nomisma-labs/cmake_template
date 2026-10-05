@@ -2,10 +2,38 @@
 
 Notable changes to this repo. The format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and versions follow [Semantic Versioning](https://semver.org); how to release:
-[docs/build.md](docs/build.md#versioning).
+[docs/kit/build.md](docs/kit/build.md#versioning).
 A release's `### Upgrade` section lists the steps derived repos take by hand; `tools/kit/sync_template.py` prints them. <!-- template-only -->
 
 ## [Unreleased]
+
+### Changed
+
+- The shared docs move to `docs/kit/`, next to `cmake/kit/` and `tools/kit/`: `build.md`,
+  `conventions.md`, `howto.md` and `new_repo.md`, with an index in `docs/kit/README.md`. A repo
+  keeps its own docs in `docs/`, outside the kit.
+- `AGENTS.md` splits in two. The rules every repo shares move to the template-owned
+  `docs/kit/agents.md`; a repo's `AGENTS.md` keeps its description and its own rules, and imports
+  the shared file with `@docs/kit/agents.md`.
+- The shared CMake presets move to `cmake/kit/presets.json`. A repo's `CMakePresets.json`
+  includes that file and holds only presets of its own.
+- `cmake/README.md` moves into the kit as `cmake/kit/README.md`.
+- `README.md` drops its bootstrap and manual build sections for a short build section; their
+  details are in `docs/kit/build.md`.
+
+### Upgrade
+
+- Shorten `AGENTS.md` to the repo's description, the line
+  `Read and follow the rules every Nomisma repo shares: @docs/kit/agents.md`, and the repo's own
+  rules; `docs/kit/agents.md` now has the shared sections.
+- Replace `CMakePresets.json` with cmake_template's, which includes `cmake/kit/presets.json`, and
+  keep only presets of the repo's own in it, under names the kit doesn't use.
+- Delete `cmake/README.md` unless it describes the repo's own CMake files; the kit's README is now
+  `cmake/kit/README.md`.
+- Point `docs/README.md` at `docs/kit/README.md`, and replace the bootstrap and manual build
+  sections of `README.md` with a short build section that links `docs/kit/build.md`.
+- Update the links the sync lists, and the `docs/build.md` link at the top of `CHANGELOG.md`: the
+  shared docs moved from `docs/` to `docs/kit/`.
 
 ## [0.5.0] - 2026-10-05
 

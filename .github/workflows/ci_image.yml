@@ -2,7 +2,7 @@
 # SPDX-License-Identifier: LicenseRef-Nomisma-Labs-Proprietary
 #
 # Template only: builds docker/ci/Dockerfile and publishes ghcr.io/<owner>/ci for every repo's
-# ci.yml. After the first run, make the package public (docs/new_repo.md).
+# ci.yml. After the first run, make the package public (docs/kit/new_repo.md).
 name: ci-image
 
 on:

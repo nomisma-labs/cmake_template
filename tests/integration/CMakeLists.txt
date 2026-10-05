@@ -1,7 +1,7 @@
 # SPDX-FileCopyrightText: 2026 Alexey Tkachenko
 # SPDX-License-Identifier: LicenseRef-Nomisma-Labs-Proprietary
 
-# Integration checks for library usage and installation (docs/howto.md#library-usage-integration-tests).
+# Integration checks for library usage and installation (docs/kit/howto.md#library-usage-integration-tests).
 
 # template-only:begin
 find_package(Python3 3.10 REQUIRED COMPONENTS Interpreter)

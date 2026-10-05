@@ -5,9 +5,9 @@
 
     python3 tools/init_project.py <name> [--template-url <url>] [--no-commit]
 
-Run it once, right after creating the repo from the template (docs/new_repo.md). It deletes the
+Run it once, right after creating the repo from the template (docs/kit/new_repo.md). It deletes the
 template's example code, lab and template-only files instead of renaming them, so the new repo
-starts empty and grows through the recipes in docs/howto.md. In the files that remain it removes
+starts empty and grows through the recipes in docs/kit/howto.md. In the files that remain it removes
 the lines and blocks marked template-only, sets the name and version 0.1.0 in project(), puts
 the name and a TODO description into README.md and AGENTS.md, and starts an empty CHANGELOG.md.
 It checks everything first, and stops without changing anything if the repo doesn't look like
@@ -217,7 +217,7 @@ def main() -> int:
         print(f"error: {detail}\nthe repo is half-initialized; restore it with "
               "`git reset --hard && git clean -fd`, then run the script again", file=sys.stderr)
         return 1
-    print(f"initialized '{args.name}', an empty repo: add code with docs/howto.md, "
+    print(f"initialized '{args.name}', an empty repo: add code with docs/kit/howto.md, "
           "build with cmake --workflow --preset dev")
     return 0
 

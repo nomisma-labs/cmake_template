@@ -1,6 +1,6 @@
 # Toolchain findings
 
-Supported tools and versions are recorded in [Build: Toolchain](../build.md#toolchain).
+Supported tools and versions are recorded in [Build: Toolchain](../kit/build.md#toolchain).
 The presets use GCC 16 for normal builds and Clang 19 for the second compiler and sanitizers.
 
 ## Native modules

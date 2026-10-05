@@ -1,7 +1,7 @@
 # SPDX-FileCopyrightText: 2026 Alexey Tkachenko
 # SPDX-License-Identifier: LicenseRef-Nomisma-Labs-Proprietary
 #
-# CI image for all Nomisma repos: the toolchain from docs/build.md. Built and published by
+# CI image for all Nomisma repos: the toolchain from docs/kit/build.md. Built and published by
 # .github/workflows/ci_image.yml.
 FROM ubuntu:26.04
 
