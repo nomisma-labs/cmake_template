@@ -3,8 +3,35 @@
 Notable changes to this repo. The format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and versions follow [Semantic Versioning](https://semver.org); how to release:
 [docs/build.md](docs/build.md#versioning).
+A release's `### Upgrade` section lists the steps derived repos take by hand; `tools/kit/sync_template.py` prints them. <!-- template-only -->
 
 ## [Unreleased]
+
+### Changed
+
+- Template-owned tools move to `tools/kit/`, which repos receive as a whole; a repo keeps its own
+  tools in `tools/`, outside the kit. The checks drop their `check_` prefix and live in
+  `tools/kit/checks/` (`tools/check_format.sh` is now `tools/kit/checks/format.sh`), and
+  `tools/kit/README.md` lists every tool.
+- `tools/kit/sync_template.py` replaces template-owned files instead of merging differences into
+  them. It syncs to the newest release by default and runs the target release's copy of itself.
+  When a template-owned file was edited in the repo it changes nothing and lists the file, and
+  `--overwrite` takes the template's version. It stages `.template_ref` with the rest, then lists
+  the repo's own files that mention moved or removed template paths, repo files inside the kit's
+  folders, and the upgrade steps of the releases in between.
+
+### Added
+
+- `### Upgrade` sections in this changelog for the steps derived repos take by hand.
+- An integration test of the sync on a scratch template and scratch repos.
+
+### Upgrade
+
+- A repo created before 0.5.0 has the old `tools/sync_template.py`, which can't sync to this
+  release. Run the new script once from a `cmake_template` checkout at v0.5.0 or later, next to
+  the repo: `python3 ../cmake_template/tools/kit/sync_template.py`. Later syncs run the repo's
+  own `tools/kit/sync_template.py`.
+- Update the repo's own files that the sync lists: tool paths moved from `tools/` to `tools/kit/`.
 
 ## [0.4.1] - 2026-10-05
 

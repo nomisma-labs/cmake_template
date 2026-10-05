@@ -11,13 +11,13 @@ if(CMAKE_TEMPLATE_TEST_PYTHON_PACKAGE)
     if(NOT NOM_PYTHON_EXECUTABLE)
         message(FATAL_ERROR "Python wheel tests require NOM_PYTHON_EXECUTABLE. "
             "Create build/python-env with python3 -m venv, then install "
-            "tools/python_package_requirements.txt with that environment's pip.")
+            "tools/kit/python_package_requirements.txt with that environment's pip.")
     endif()
     execute_process(COMMAND ${NOM_PYTHON_EXECUTABLE} -c "import build, pip, scikit_build_core"
         RESULT_VARIABLE python_package_dependencies OUTPUT_QUIET ERROR_QUIET)
     if(NOT python_package_dependencies EQUAL 0)
         message(FATAL_ERROR "NOM_PYTHON_EXECUTABLE must provide build, pip and scikit-build-core. "
-            "Install tools/python_package_requirements.txt with that environment's pip.")
+            "Install tools/kit/python_package_requirements.txt with that environment's pip.")
     endif()
     find_program(python_package_ninja ninja REQUIRED)
     add_test(NAME ${PROJECT_NAME}_python_package
@@ -36,6 +36,11 @@ add_test(NAME ${PROJECT_NAME}_app_presets
         --generator "${CMAKE_GENERATOR}"
         --kit ${PROJECT_SOURCE_DIR}/cmake/kit)
 set_tests_properties(${PROJECT_NAME}_app_presets PROPERTIES LABELS integration)
+
+add_test(NAME ${PROJECT_NAME}_template_sync
+    COMMAND ${Python3_EXECUTABLE} ${CMAKE_CURRENT_SOURCE_DIR}/template_sync/check.py
+        --script ${PROJECT_SOURCE_DIR}/tools/kit/sync_template.py)
+set_tests_properties(${PROJECT_NAME}_template_sync PROPERTIES LABELS integration)
 
 if(UNIX)
     add_test(NAME ${PROJECT_NAME}_relocation

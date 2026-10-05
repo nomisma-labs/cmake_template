@@ -49,6 +49,6 @@ source/install consumption checks, and `nom_python_module()` for optional Python
 Dependency services such as `nom_find_metal()` and `nom_find_catch2()` are called before targets
 that need them. Full signatures and options are in the [build guide](../docs/build.md#the-cmake-kit).
 
-The kit is **template-owned**: update it in `cmake_template`, then use `tools/sync_template.py`
+The kit is **template-owned**: update it in `cmake_template`, then use `tools/kit/sync_template.py`
 in derived repos. Other CMake files directly under `cmake/` are repository declarations;
 shared build mechanisms belong in the kit.

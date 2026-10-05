@@ -19,9 +19,11 @@ import re
 import shutil
 import subprocess
 import sys
+from pathlib import Path
 
-from sync_template import ROOT, TEMPLATE_OWNED, git, read_template_ref, write_template_ref
+from kit.sync_template import TEMPLATE_OWNED, read_template_ref, write_template_ref
 
+ROOT = Path(__file__).resolve().parent.parent
 TEMPLATE_PROJECT = "cmake_template"
 # The example code, the lab and the template-only files. Every path must exist.
 REMOVED = [
@@ -32,6 +34,7 @@ REMOVED = [
     "tests/integration/app_presets",
     "tests/integration/relocation",
     "tests/integration/python_package",
+    "tests/integration/template_sync",
     "python",
     "pyproject.toml",
     "docs/lab",
@@ -50,6 +53,10 @@ DESCRIPTION = re.compile(r"(<!-- repo-description:begin -->\n).*?(<!-- repo-desc
 
 class InitError(Exception):
     pass
+
+
+def git(*args: str) -> str:
+    return subprocess.run(["git", *args], cwd=ROOT, capture_output=True, text=True, check=True).stdout.strip()
 
 
 def is_removed(relative: str) -> bool:
@@ -184,7 +191,7 @@ def main() -> int:
         print(f"error: {error}; nothing was changed", file=sys.stderr)
         return 1
 
-    url = args.template_url or read_template_ref().get("url", "")
+    url = args.template_url or read_template_ref(ROOT).get("url", "")
     if not url:
         print("error: set url in .template_ref to the hosted cmake_template clone URL, "
               "or pass --template-url; nothing was changed", file=sys.stderr)
@@ -200,7 +207,7 @@ def main() -> int:
         remove_template_content()
         for relative, text in edits.items():
             (ROOT / relative).write_text(text, encoding="utf-8")
-        write_template_ref(url, sha)
+        write_template_ref(ROOT, url, sha)
         if not args.no_commit:
             git("add", "--all")
             git("commit", "--quiet", "-m", f"Initialize {args.name} from cmake_template@{sha[:12] or 'unknown'}")

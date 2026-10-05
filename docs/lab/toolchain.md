@@ -47,7 +47,7 @@ clang++-19 -std=c++23 @…/main.cpp.o.modmap … -c main.cpp
 Use `build/clang/compile_commands.json` for Clang tools; the GCC database contains module flags
 they cannot use. `.clangd` selects the Clang database for the editor.
 
-`tools/check_naming.sh` configures the `clang` preset with `-DNOM_BUILD_PRESET=complete`, then
+`tools/kit/checks/naming.sh` configures the `clang` preset with `-DNOM_BUILD_PRESET=complete`, then
 builds it so that module BMIs are available, including those used by sandbox apps. It runs
 `run-clang-tidy-19` over the native module units and importers in `core/`, `apps/` and `tests/`
 using that database. The naming check passes for the current native-module example and

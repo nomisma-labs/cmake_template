@@ -12,7 +12,7 @@ every mechanism working; `tools/init_project.py` removes it from new repos.
 - Run `./bootstrap.sh` for fresh validation builds, tests and quality checks, or `./bootstrap.sh <preset>` for one preset.
   Presets are discovered through CMake; the default selects all matching configure/build/test names except `release`.
   It clears selected build directories and previous bootstrap logs; `--help` lists the discovered presets.
-  Python 3.10+ is required; `tools/check_python.py` validates syntax and imports before builds.
+  Python 3.10+ is required; `tools/kit/checks/python.py` validates syntax and imports before builds.
 - First checkout: `git submodule update --init --recursive`.
 - Configure once with `cmake --preset dev`; then, in `build/dev`, `ninja` builds and
   `ctest --output-on-failure` tests. Binaries land in `build/<preset>/bin/`.
@@ -37,7 +37,8 @@ every mechanism working; `tools/init_project.py` removes it from new repos.
 - `cmake/kit/`: the shared CMake kit; `api/` exposes client helpers, `deps/` provides dependency
   services, `internal/` holds implementation details, and `templates/` holds package templates.
   Include only `cmake/kit/nom_kit.cmake`; see [cmake/README.md](cmake/README.md).
-  `tools/`: checks and repo scripts. `docs/`: documentation.
+  `tools/kit/`: the shared checks and scripts ([tools/kit/README.md](tools/kit/README.md)); the
+  repo's own tools go in `tools/`, outside the kit. `docs/`: documentation.
 
 ## Adding code
 
@@ -47,19 +48,19 @@ a Python package, a dependency, an experiment.
 ## Rules
 
 - Follow [docs/conventions.md](docs/conventions.md): `snake_case` everywhere, `PascalCase` template
-  parameters, UPPER_CASE only for macros. `tools/check_naming.sh` enforces the naming.
+  parameters, UPPER_CASE only for macros. `tools/kit/checks/naming.sh` enforces the naming.
 - C++ test sources use `*_test.cxx` in both unit and integration tests; regular sources use `.cpp`.
-- Every source file starts with the SPDX header; `python3 tools/check_headers.py` checks it.
-- Format with `tools/check_format.sh --fix`.
+- Every source file starts with the SPDX header; `python3 tools/kit/checks/headers.py` checks it.
+- Format with `tools/kit/checks/format.sh --fix`.
 - Add targets with the kit (`nom_lib`, `nom_app`, `nom_python_module`, `nom_c2test`), not raw CMake.
 - Python packaging mechanisms belong in the template; derived repos declare package metadata,
   bindings, dependencies and runtime libraries through the shared facilities.
 - Link `nom::metal` where Metal headers are needed. For a public dependency, list `nom_metal`
   in `nom_install_package(DEPENDENCIES …)`; the kit installs its headers and license separately.
-- Template-owned paths (`bootstrap.sh`, `cmake/kit/`, `tools/`, `docs/build.md`, `docs/conventions.md`,
+- Template-owned paths (`bootstrap.sh`, `cmake/kit/`, `tools/kit/`, `docs/build.md`, `docs/conventions.md`,
   `docs/howto.md`, `docs/new_repo.md`, `.clang-format`, `.clang-tidy`, `.clangd`, `.editorconfig`,
   `.github/workflows/ci.yml`) change only in cmake_template and reach other repos through
-  `tools/sync_template.py`. Don't edit them in a derived repo.
+  `tools/kit/sync_template.py`. Don't edit them in a derived repo.
 - Define our C++ library APIs in named modules; apps and tests import them.
   Keep macros in headers, and use wrappers or headers at third-party boundaries.
   Put `#include`s before `import`s and include the std

@@ -28,7 +28,7 @@ jobs:
       - name: Prepare Python packaging environment
         run: |
           python3 -m venv build/python-env
-          build/python-env/bin/python -m pip install -r tools/python_package_requirements.txt
+          build/python-env/bin/python -m pip install -r tools/kit/python_package_requirements.txt
       - name: Configure wheel integration test
         run: >-
           cmake --preset ci -DCMAKE_TEMPLATE_TEST_PYTHON_PACKAGE=ON
@@ -41,16 +41,15 @@ jobs:
     runs-on: ubuntu-26.04
     steps:
       - uses: actions/checkout@v4
-      # tools/sync_template.py copies template-owned files into every repo, so they must not
+      # tools/kit/sync_template.py copies template-owned files into every repo, so they must not
       # mention the example package or the template's own CMAKE_TEMPLATE_* options.
       - name: Search template-owned files for template-only names
         run: |
           python3 - <<'EOF'
           import subprocess, sys
-          sys.path.insert(0, "tools")
-          from sync_template import TEMPLATE_ONLY, TEMPLATE_OWNED
-          paths = [*TEMPLATE_OWNED, *(f":(exclude){path}" for path in TEMPLATE_ONLY)]
-          found = subprocess.run(["git", "grep", "-nE", "CMAKE_TEMPLATE_|nomisma_example", "--", *paths])
+          sys.path.insert(0, "tools/kit")
+          from sync_template import TEMPLATE_OWNED
+          found = subprocess.run(["git", "grep", "-nE", "CMAKE_TEMPLATE_|nomisma_example", "--", *TEMPLATE_OWNED])
           if found.returncode == 0:
               print("::error::move template-only content out of template-owned files")
           sys.exit(0 if found.returncode == 1 else 1)
