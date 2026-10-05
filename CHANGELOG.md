@@ -7,6 +7,8 @@ A release's `### Upgrade` section lists the steps derived repos take by hand; `t
 
 ## [Unreleased]
 
+## [0.6.0] - 2026-10-05
+
 ### Changed
 
 - The shared docs move to `docs/kit/`, next to `cmake/kit/` and `tools/kit/`: `build.md`,
