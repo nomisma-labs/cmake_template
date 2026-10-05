@@ -7,6 +7,8 @@ A release's `### Upgrade` section lists the steps derived repos take by hand; `t
 
 ## [Unreleased]
 
+## [0.5.0] - 2026-10-05
+
 ### Changed
 
 - Template-owned tools move to `tools/kit/`, which repos receive as a whole; a repo keeps its own
