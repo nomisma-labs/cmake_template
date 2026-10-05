@@ -6,6 +6,8 @@ and versions follow [Semantic Versioning](https://semver.org); how to release:
 
 ## [Unreleased]
 
+## [0.4.1] - 2026-10-05
+
 ### Fixed
 
 - Keep template-only content out of template-owned files, which reach every derived repo: the
