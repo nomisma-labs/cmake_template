@@ -19,8 +19,9 @@ every mechanism working; `tools/init_project.py` removes it from new repos.
 - `cmake --workflow --preset dev` does all three. Other presets: `complete`, `clang`, `asan`, `release`, `ci`.
   `complete` is Debug with every app; `nom_app(... BUILD_FOR dev ci)` limits normal build/install participation.
   Details: [docs/build.md](docs/build.md).
-- Native Python packaging is opt-in: use the pinned environment and wheel test commands in
+- Native Python packaging is opt-in: use the pinned environment and wheel build commands in
   [docs/build.md](docs/build.md#native-python-wheels). Ordinary C++ builds need no packaging tools.
+- The example's wheel checks: [README.md](README.md#example-wheel-checks). <!-- template-only -->
 
 ## Layout
 

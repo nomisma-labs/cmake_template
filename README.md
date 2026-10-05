@@ -88,9 +88,23 @@ is named `example` (`nom::example`); its code and tests exercise the build syste
 - **Tests:** `tests/unit/` holds Catch2 suites that import the module; `tests/integration/`
   checks library usage from a separate project and config installation. Use `ctest --preset dev -L unit` or `ctest --preset dev -L integration` to select a group.
 - **Python package:** the optional `nomisma_example` wheel exposes the example C++ API and
-  bundles its shared library. Opt-in integration checks cover source and installed-library builds.
+  bundles its shared library. [Opt-in checks](#example-wheel-checks) cover source and
+  installed-library builds.
 - **Build system:** presets, the CMake kit (`cmake/kit/`), dependencies as submodules in `external/`.
 - **Checks and CI:** SPDX headers, formatting, naming and the release-tag check, on a shared CI
   image. Validate a newly initialized repo locally with `./bootstrap.sh`.
 - **Lab:** [docs/lab/](docs/lab/README.md).
+
+## Example wheel checks
+
+The checks build the `nomisma_example` wheels, install them in fresh virtual environments and
+call the native API outside the source and build trees, without the original native artifacts.
+They also check metadata and bundled runtime libraries. The `ci-template` workflow runs them;
+locally, create the [packaging environment](docs/build.md#native-python-wheels), then:
+
+```bash
+cmake --preset ci -DCMAKE_TEMPLATE_TEST_PYTHON_PACKAGE=ON \
+  -DNOM_PYTHON_EXECUTABLE="$PWD/build/python-env/bin/python"
+ctest --preset ci -R python_package --output-on-failure
+```
 <!-- template-only:end -->

@@ -6,6 +6,15 @@ and versions follow [Semantic Versioning](https://semver.org); how to release:
 
 ## [Unreleased]
 
+### Fixed
+
+- Keep template-only content out of template-owned files, which reach every derived repo: the
+  example wheel job moves from `ci.yml` to the template-only `ci-template` workflow, the example's
+  wheel checks move from `docs/build.md` to the README, and `bootstrap.sh` no longer looks for
+  `tools/init_project.py`. A `ci-template` job fails when template-owned files mention
+  template-only names.
+- `docs/build.md` describes the CI that runs: the `ci` workflow preset and the first four checks.
+
 ## [0.4.0] - 2026-10-04
 
 ### Changed

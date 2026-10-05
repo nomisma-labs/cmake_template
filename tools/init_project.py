@@ -37,6 +37,7 @@ REMOVED = [
     "docs/lab",
     "docker",
     ".github/workflows/ci_image.yml",
+    ".github/workflows/ci_template.yml",
     "tools/init_project.py",
 ]
 REMOVED_SUBMODULES = ["external/nlohmann_json"]
