@@ -7,6 +7,8 @@ A release's `### Upgrade` section lists the steps derived repos take by hand; `t
 
 ## [Unreleased]
 
+## [0.7.0] - 2026-10-08
+
 ### Changed
 
 - A repo's own CMake files go in `cmake/<repo>/`; the kit stays the shared set every repo gets.
