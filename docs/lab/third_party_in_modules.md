@@ -82,21 +82,23 @@ supported compilers.
 ## Metal through a native module
 
 Validated on 2026-10-03 with Metal v2.1.4, GCC 16 and Clang 19, using the toolchain recorded
-above. `nom.example:types` includes Metal's `list`, `at` and `number` headers in its global module
-fragment, then exports `type_at_t<Index, Types...>`. The primary `nom.example` interface
-re-exports that partition. Importing unit tests and both source and installed-package consumers
-instantiate the alias successfully on both compilers; the package consumer rebuilds the module
+above. `nom.example:types` included Metal's `list`, `at` and `number` headers in its global module
+fragment, then exported `type_at_t<Index, Types...>`. The primary `nom.example` interface
+re-exported that partition. Importing unit tests and both source and installed-package consumers
+instantiated the alias successfully on both compilers; the package consumer rebuilt the module
 interfaces using the installed Metal headers.
 
-This validates a small public template backed by Metal. Full relay-style filtering and dispatch,
-and their compile-time and runtime performance, remain separate investigations.
+This validated a small public template backed by Metal. Full relay-style filtering and dispatch
+now live in assembly; their compile-time and runtime performance remain separate investigations.
 
-Metal is retained as a foundation submodule when initializing a repository. `nom_find_metal()`
-provides the shared `nom::metal` header target without configuring Metal's upstream project.
-The separate `nom_metal` package installs the headers and license; a standalone consumer using
-`find_package(nom_metal 2.1.4 EXACT CONFIG REQUIRED)` passes. A two-project build sharing
-`nom::metal` also installs both exported packages successfully. Public users list `nom_metal`
-in `nom_install_package(DEPENDENCIES …)`.
+Until 0.6.0, initialization retained Metal as a foundation submodule. `nom_find_metal()`
+provided the shared `nom::metal` header target without configuring Metal's upstream project.
+The separate `nom_metal` package installed the headers and license; a standalone consumer using
+`find_package(nom_metal 2.1.4 EXACT CONFIG REQUIRED)` passed. A two-project build sharing
+`nom::metal` also installed both exported packages successfully.
+
+Since 0.7.0 the template doesn't carry Metal. Assembly, its only user, keeps the submodule and the
+helper in `cmake/assembly/`; `nom.example:types` defines `type_at_t` with `std::tuple_element_t`.
 
 ## Third-party CMake projects as subprojects
 

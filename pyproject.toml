@@ -11,7 +11,7 @@ dynamic = ["version"]
 description = "Native Python packaging example for the Nomisma CMake template"
 requires-python = ">=3.10"
 license = "LicenseRef-Nomisma-Labs-Proprietary"
-license-files = ["LICENSE", "external/metal/LICENSE", "external/nlohmann_json/LICENSE.MIT"]
+license-files = ["LICENSE", "external/nlohmann_json/LICENSE.MIT"]
 
 [tool.scikit-build]
 minimum-version = "build-system.requires"
@@ -20,7 +20,7 @@ ninja.version = ">=1.11"
 cmake.build-type = "Release"
 wheel.packages = ["python/nomisma_example"]
 install.components = ["nom_python"]
-sdist.include = ["external/metal/**", "external/nlohmann_json/**"]
+sdist.include = ["external/nlohmann_json/**"]
 sdist.exclude = ["build/**", "dist/**"]
 
 [tool.scikit-build.cmake.define]

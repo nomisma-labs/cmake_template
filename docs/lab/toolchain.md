@@ -32,7 +32,8 @@ cmake --workflow --preset asan
 
 The [third-party findings](third_party_in_modules.md) cover the GCC 16 warning when exporting a
 nlohmann JSON alias and the tested Metal typelist alias on GCC 16 and Clang 19. JSON stays private
-to the settings implementation; Metal supplies the exported typelist machinery.
+to the settings implementation; the exported typelist alias uses the standard library since Metal
+moved to assembly.
 
 ## compile_commands.json and clang tools
 

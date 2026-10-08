@@ -7,6 +7,34 @@ A release's `### Upgrade` section lists the steps derived repos take by hand; `t
 
 ## [Unreleased]
 
+### Changed
+
+- A repo's own CMake files go in `cmake/<repo>/`; the kit stays the shared set every repo gets.
+- Advance the shared kit identifier to `0.7.0` so mixed copies report that `nom_find_metal()` is gone.
+
+### Removed
+
+- Metal leaves the shared dependency baseline; assembly, its only user, now carries it. The
+  template drops the `external/metal` submodule, and the kit drops `nom_find_metal()` and the
+  `nom_metal` package (`cmake/kit/deps/metal.cmake` and `metal_config.cmake.in`), so new repos
+  start without Metal. The example's `type_at_t` uses `std::tuple_element_t` instead.
+
+### Upgrade
+
+- Move CMake files of the repo's own from directly under `cmake/` into `cmake/<repo>/`.
+- A repo that doesn't use Metal: delete the `nom_find_metal()` call from the top-level
+  `CMakeLists.txt`, remove the submodule with `git rm external/metal` (and `.gitmodules`, if that
+  leaves it empty), and drop Metal from the repo's own docs.
+- A repo that uses Metal keeps the submodule and takes the helper over before committing the
+  sync, while `HEAD` still has it:
+  ```bash
+  mkdir -p cmake/<repo>
+  git show HEAD:cmake/kit/deps/metal.cmake > cmake/<repo>/metal.cmake
+  git show HEAD:cmake/kit/deps/metal_config.cmake.in > cmake/<repo>/metal_config.cmake.in
+  ```
+  Then add `include(cmake/<repo>/metal.cmake)` before the `nom_find_metal()` call. The
+  `nom::metal` target and the `nom_metal` package keep their names.
+
 ## [0.6.0] - 2026-10-05
 
 ### Changed

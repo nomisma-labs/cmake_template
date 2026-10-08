@@ -18,9 +18,8 @@ nom_lib(example ${example_linkage}
         join.cppm
         settings.cppm
         types.cppm
-    PUBLIC_DEPS nom::metal
     PRIVATE_DEPS nlohmann_json::nlohmann_json)
 
 if(nom_install)
-    nom_install_package(TARGETS example DEPENDENCIES nlohmann_json nom_metal)
+    nom_install_package(TARGETS example DEPENDENCIES nlohmann_json)
 endif()
