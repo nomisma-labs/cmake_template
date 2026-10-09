@@ -7,6 +7,8 @@ A release's `### Upgrade` section lists the steps derived repos take by hand; `t
 
 ## [Unreleased]
 
+## [0.8.1] - 2026-10-10
+
 ### Fixed
 
 - Sandbox experiments are git-ignored, as intended: `.gitignore` ignores every folder in
