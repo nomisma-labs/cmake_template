@@ -43,6 +43,11 @@ add_test(NAME ${PROJECT_NAME}_template_sync
 set_tests_properties(${PROJECT_NAME}_template_sync PROPERTIES LABELS integration)
 
 if(UNIX)
+    add_test(NAME ${PROJECT_NAME}_git_hooks
+        COMMAND ${Python3_EXECUTABLE} ${CMAKE_CURRENT_SOURCE_DIR}/git_hooks/check.py
+            --source ${PROJECT_SOURCE_DIR})
+    set_tests_properties(${PROJECT_NAME}_git_hooks PROPERTIES LABELS integration)
+
     add_test(NAME ${PROJECT_NAME}_relocation
         COMMAND ${Python3_EXECUTABLE} ${CMAKE_CURRENT_SOURCE_DIR}/relocation/check.py
             --cmake ${CMAKE_COMMAND} --compiler ${CMAKE_CXX_COMPILER}

@@ -47,6 +47,9 @@ a Python package, a dependency, an experiment.
 - C++ test sources use `*_test.cxx` in both unit and integration tests; regular sources use `.cpp`.
 - Every source file starts with the SPDX header; `python3 tools/kit/checks/headers.py` checks it.
 - Format with `tools/kit/checks/format.sh --fix`.
+- Commits run the git hooks in `tools/kit/hooks/` once bootstrap has enabled them. Never skip them
+  with `--no-verify`: fix what they report, stage the fixes and commit again. Commit messages carry
+  no `Co-Authored-By` trailers ([build.md](build.md#git-hooks)).
 - Add targets with the kit (`nom_lib`, `nom_app`, `nom_python_module`, `nom_c2test`), not raw CMake.
 - Python packaging mechanisms belong in the template; derived repos declare package metadata,
   bindings, dependencies and runtime libraries through the shared facilities.

@@ -7,6 +7,20 @@ A release's `### Upgrade` section lists the steps derived repos take by hand; `t
 
 ## [Unreleased]
 
+### Added
+
+- Git hooks in `tools/kit/hooks/`, which `./bootstrap.sh` enables for each clone by pointing
+  `core.hooksPath` at them, unless the setting already names other hooks. `pre-commit` checks
+  the staged copy of each staged file for whitespace errors, formatting and SPDX headers;
+  `commit-msg` rejects `Co-Authored-By` trailers ([docs/kit/build.md](docs/kit/build.md#git-hooks)).
+- `tools/kit/checks/format.sh --staged` and `tools/kit/checks/headers.py --staged` check the
+  staged copy of each staged file, as the pre-commit hook does. The header check covers the hooks.
+
+### Upgrade
+
+- Run `./bootstrap.sh` once in each clone to enable the hooks, or enable them directly with
+  `git config core.hooksPath tools/kit/hooks`.
+
 ## [0.7.0] - 2026-10-08
 
 ### Changed
