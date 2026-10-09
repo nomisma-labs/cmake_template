@@ -7,6 +7,8 @@ A release's `### Upgrade` section lists the steps derived repos take by hand; `t
 
 ## [Unreleased]
 
+## [0.8.0] - 2026-10-09
+
 ### Added
 
 - Git hooks in `tools/kit/hooks/`, which `./bootstrap.sh` enables for each clone by pointing
