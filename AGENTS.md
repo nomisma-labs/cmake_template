@@ -14,7 +14,8 @@ Rules for this repo alone follow below.
 <!-- template-only:begin -->
 ## This repo
 
-- Lab work: experiments go in `apps/sandbox/`, findings in `docs/lab/`.
+- Lab work: experiments go in `apps/sandbox/`, findings in `docs/lab/`. An experiment a finding
+  cites gets a `!` exception in the template-only block of `.gitignore`.
 - End a line that new repos must not get with a `template-only` comment, or wrap a block in
   `template-only:begin`/`template-only:end` comments; `tools/init_project.py` removes them.
   Template-owned files carry none.

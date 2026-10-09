@@ -3,6 +3,8 @@
 `cmake_template` is also the place to try build and C++ features before real repos rely on them.
 Experiments live in `apps/sandbox/` (`python3 tools/kit/add_sandbox_app.py <name>` adds one); findings
 go here, one file per topic, with the compiler and CMake versions, the verdict and any workaround.
+Experiments are git-ignored like in every repo; one that a finding cites gets a `!` exception in
+the template-only block of `.gitignore`, as `native_module` has.
 Build experiments with `cmake --workflow --preset complete`; for Clang use
 `cmake --preset clang -DNOM_BUILD_PRESET=complete` and `cmake --build --preset clang`.
 New repos don't get this folder.

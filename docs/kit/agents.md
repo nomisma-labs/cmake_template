@@ -24,6 +24,7 @@ repo's `AGENTS.md` imports it and adds the repo's own rules.
   interfaces and partitions use `.cppm`, implementation units use `.cpp`.
 - `apps/<app>/`: executables; optional `config/` is collected into `build/<preset>/config/<app>/` and installed with the app.
 - `apps/sandbox/`: experiments, normally `BUILD_FOR complete`; also buildable explicitly in other presets.
+  They are git-ignored and stay in the clone; don't commit one unless asked.
 - `tests/unit/<suite>/` or inline `<code dir>/tests/<suite>/`: Catch2 unit tests, labeled `unit`.
   Catch2 is found at the project root when tests are enabled, before code directories.
 - `tests/integration/`: library usage and installation checks, labeled `integration`.

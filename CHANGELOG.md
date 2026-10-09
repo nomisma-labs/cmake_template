@@ -7,6 +7,21 @@ A release's `### Upgrade` section lists the steps derived repos take by hand; `t
 
 ## [Unreleased]
 
+### Fixed
+
+- Sandbox experiments are git-ignored, as intended: `.gitignore` ignores every folder in
+  `apps/sandbox/`, so experiments stay in the clone, out of `git status` and out of the checks that
+  read untracked files. `apps/sandbox/CMakeLists.txt` stays tracked and still builds whichever
+  experiments exist; `git add -f` commits one that is worth sharing.
+
+### Upgrade
+
+- Add the sandbox rule to the repo's `.gitignore`, which the sync doesn't touch:
+  ```gitignore
+  # Sandbox experiments stay in the clone; apps/sandbox/CMakeLists.txt builds whichever exist.
+  /apps/sandbox/*/
+  ```
+
 ## [0.8.0] - 2026-10-09
 
 ### Added
