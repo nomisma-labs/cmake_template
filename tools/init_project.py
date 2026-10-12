@@ -32,6 +32,7 @@ REMOVED = [
     "tests/unit/example",
     "tests/integration/library_usage",
     "tests/integration/app_presets",
+    "tests/integration/compile_options",
     "tests/integration/relocation",
     "tests/integration/python_package",
     "tests/integration/template_sync",

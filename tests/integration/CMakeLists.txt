@@ -37,6 +37,14 @@ add_test(NAME ${PROJECT_NAME}_app_presets
         --kit ${PROJECT_SOURCE_DIR}/cmake/kit)
 set_tests_properties(${PROJECT_NAME}_app_presets PROPERTIES LABELS integration)
 
+add_test(NAME ${PROJECT_NAME}_compile_options
+    COMMAND ${Python3_EXECUTABLE} ${CMAKE_CURRENT_SOURCE_DIR}/compile_options/check.py
+        --cmake ${CMAKE_COMMAND}
+        --compiler ${CMAKE_CXX_COMPILER}
+        --generator "${CMAKE_GENERATOR}"
+        --kit ${PROJECT_SOURCE_DIR}/cmake/kit)
+set_tests_properties(${PROJECT_NAME}_compile_options PROPERTIES LABELS integration)
+
 add_test(NAME ${PROJECT_NAME}_template_sync
     COMMAND ${Python3_EXECUTABLE} ${CMAKE_CURRENT_SOURCE_DIR}/template_sync/check.py
         --script ${PROJECT_SOURCE_DIR}/tools/kit/sync_template.py)

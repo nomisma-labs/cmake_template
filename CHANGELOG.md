@@ -7,6 +7,20 @@ A release's `### Upgrade` section lists the steps derived repos take by hand; `t
 
 ## [Unreleased]
 
+## [0.8.2] - 2026-10-12
+
+### Added
+
+- `COMPILE_OPTIONS` for `nom_app()` and `nom_lib()`, accepting compiler flags such as
+  `-DOPTION=value`. Options are private to applications and compiled libraries; interface
+  libraries pass them to consumers. Arguments are forwarded as a CMake list.
+- Build-and-run coverage for app options, static and shared library options, interface
+  propagation, and unquoted macro values converted to strings in C++.
+
+### Changed
+
+- Advance the shared kit identifier to `0.8.2` so mixed copies report the new helper support.
+
 ## [0.8.1] - 2026-10-10
 
 ### Fixed
