@@ -7,6 +7,14 @@ A release's `### Upgrade` section lists the steps derived repos take by hand; `t
 
 ## [Unreleased]
 
+## [0.8.4] - 2026-10-13
+
+### Changed
+
+- The workflows use `actions/checkout@v7`, `docker/login-action@v4` and
+  `docker/build-push-action@v7`, which run on Node.js 24. GitHub deprecated Node.js 20 for
+  actions, and runs warned about the old versions.
+
 ## [0.8.3] - 2026-10-13
 
 ### Added

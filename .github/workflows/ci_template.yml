@@ -22,7 +22,7 @@ jobs:
     runs-on: ubuntu-26.04
     container: ghcr.io/${{ github.repository_owner }}/ci:latest
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v7
         with:
           submodules: recursive
       - name: Prepare Python packaging environment
@@ -40,7 +40,7 @@ jobs:
     name: template-owned files stay generic
     runs-on: ubuntu-26.04
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v7
       # tools/kit/sync_template.py copies template-owned files into every repo, so they must not
       # mention the example package or the template's own CMAKE_TEMPLATE_* options.
       - name: Search template-owned files for template-only names
