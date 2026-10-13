@@ -5,7 +5,7 @@ cmake_minimum_required(VERSION 3.30)
 
 # The version lives only here; releases are tagged v<version> (docs/kit/build.md#versioning).
 project(cmake_template
-    VERSION 0.8.2
+    VERSION 0.8.3
     DESCRIPTION "Nomisma C++ repository template and build-system lab"
     LANGUAGES CXX)
 
@@ -22,6 +22,9 @@ set(JSON_Install ${nom_install}) # find_package consumers need nlohmann next to 
 FetchContent_Declare(nlohmann_json SOURCE_DIR ${PROJECT_SOURCE_DIR}/external/nlohmann_json SYSTEM)
 FetchContent_MakeAvailable(nlohmann_json)
 # template-only:end
+
+# Boost comes from system packages (docs/kit/build.md#dependencies).
+nom_find_boost()
 
 # Discover Catch2 before any code directory can register an inline test suite.
 if(nom_build_tests)

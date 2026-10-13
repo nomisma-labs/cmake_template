@@ -1,6 +1,6 @@
 # Third-party code with CMake and modules
 
-Updated: 2026-10-04. The findings below describe the current GCC 16/Clang 19 toolchain.
+Updated: 2026-10-13. The findings below describe the current GCC 16/Clang 19 toolchain.
 
 ## nlohmann_json in a module's global module fragment
 
@@ -99,6 +99,27 @@ The separate `nom_metal` package installed the headers and license; a standalone
 
 Since 0.7.0 the template doesn't carry Metal. Assembly, its only user, keeps the submodule and the
 helper in `cmake/assembly/`; `nom.example:types` defines `type_at_t` with `std::tuple_element_t`.
+
+## Boost from system packages
+
+Validated on 2026-10-13 with Boost 1.90.0 from Ubuntu packages, GCC 16, Clang 19 and CMake 4.4.3.
+`nom_find_boost()` loads Boost's own CMake package in config mode (CMake 3.30 removed the
+FindBoost module, policy CMP0167), which provides shared-library targets for program_options,
+filesystem and iostreams.
+
+- **Headers before an import:** `apps/boost_example/main.cpp` includes Boost.ProgramOptions,
+  Boost.Filesystem and Boost.Iostreams headers, then imports `nom.example`. It builds on both
+  compilers, including the warnings-as-errors `ci` preset, and its gzip round trip passes under
+  ASan and UBSan.
+- **Implementation unit:** the `boost_package` integration check includes the same headers in
+  the global module fragment of a static library's implementation unit. Consumers build and run
+  against its installed package and from source.
+- **Package consumers:** the static library's exported link interface names its private Boost
+  targets. With a bare `find_dependency(Boost)` the consumer's configure fails
+  (`Boost::program_options … but the target was not found`), so `nom_install_package()` passes
+  the version and components `nom_find_boost()` recorded.
+
+Exporting Boost types from a module interface is untested.
 
 ## Third-party CMake projects as subprojects
 

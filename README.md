@@ -37,13 +37,16 @@ is named `example` (`nom::example`); its code and tests exercise the build syste
   interface partitions, a template, compiled implementation units, a config-like type, and a
   macro header. JSON parsing uses a third-party header behind the module API.
 - **Apps:** `hello` through `import nom.example;`
-  (`build/dev/bin/hello build/dev/config/hello/settings.json`), and lab experiments in `apps/sandbox/`.
+  (`build/dev/bin/hello build/dev/config/hello/settings.json`); `boost_example`, which adds
+  Boost's program options, filesystem and gzip streams (`build/dev/bin/boost_example --help`);
+  and lab experiments in `apps/sandbox/`.
 - **Tests:** `tests/unit/` holds Catch2 suites that import the module; `tests/integration/`
   checks library usage from a separate project and config installation. Use `ctest --preset dev -L unit` or `ctest --preset dev -L integration` to select a group.
 - **Python package:** the optional `nomisma_example` wheel exposes the example C++ API and
   bundles its shared library. [Opt-in checks](#example-wheel-checks) cover source and
   installed-library builds.
-- **Build system:** presets, the CMake kit (`cmake/kit/`), dependencies as submodules in `external/`.
+- **Build system:** presets, the CMake kit (`cmake/kit/`), dependencies as submodules in
+  `external/`, and Boost from system packages.
 - **Checks and CI:** SPDX headers, formatting, naming and the release-tag check, on a shared CI
   image. Validate a newly initialized repo locally with `./bootstrap.sh`.
 - **Lab:** [docs/lab/](docs/lab/README.md).

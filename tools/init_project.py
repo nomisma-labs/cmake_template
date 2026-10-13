@@ -29,10 +29,12 @@ TEMPLATE_PROJECT = "cmake_template"
 REMOVED = [
     "core/example",
     "apps/hello",
+    "apps/boost_example",
     "tests/unit/example",
     "tests/integration/library_usage",
     "tests/integration/app_presets",
     "tests/integration/compile_options",
+    "tests/integration/boost_package",
     "tests/integration/relocation",
     "tests/integration/python_package",
     "tests/integration/template_sync",

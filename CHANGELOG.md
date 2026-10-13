@@ -7,6 +7,32 @@ A release's `### Upgrade` section lists the steps derived repos take by hand; `t
 
 ## [Unreleased]
 
+## [0.8.3] - 2026-10-13
+
+### Added
+
+- `nom_find_boost()`: the system Boost 1.90 or newer with `Boost::program_options`,
+  `Boost::filesystem` and `Boost::iostreams`. The top-level `CMakeLists.txt` calls it, so new
+  repos start with Boost. The toolchain lists the Ubuntu packages; the CI image already has them.
+- `boost_example`, an example app that parses its options with Boost.ProgramOptions, checks and
+  creates paths with Boost.Filesystem, and reads and writes gzip-compressed settings with
+  Boost.Iostreams. Integration tests round-trip its settings, and build package and source
+  consumers of a static library that links Boost privately.
+
+### Changed
+
+- `nom_install_package()` finds each dependency with the version and components its kit service
+  found it with, so consumers of a package that lists `Boost` in `DEPENDENCIES` get the Boost
+  targets its exported link interface names.
+- Advance the shared kit identifier to `0.8.3` so mixed copies report the new Boost service.
+
+### Upgrade
+
+- To use Boost, call `nom_find_boost()` in the top-level `CMakeLists.txt` after
+  `nom_project_options()` and before `add_subdirectory(core)`, as new repos do, and list `Boost`
+  in `nom_install_package(DEPENDENCIES …)` when exported targets link it. Install the Boost
+  packages from [docs/kit/build.md](docs/kit/build.md#toolchain) where they are missing.
+
 ## [0.8.2] - 2026-10-12
 
 ### Added

@@ -3,8 +3,9 @@
 <!-- repo-description:begin -->
 This is **cmake_template**: the template every Nomisma C++ repo is created from, and the lab
 where build-system and C++ features (modules first) are tried before real repos rely on them.
-Its example code (library `example`, app `hello`, their tests and the library usage test project) shows
-every mechanism working; `tools/init_project.py` removes it from new repos.
+Its example code (library `example`, apps `hello` and `boost_example`, their tests and the
+library usage test project) shows every mechanism working; `tools/init_project.py` removes it
+from new repos.
 <!-- repo-description:end -->
 
 Read and follow the rules every Nomisma repo shares: @docs/kit/agents.md
