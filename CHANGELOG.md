@@ -7,6 +7,42 @@ A release's `### Upgrade` section lists the steps derived repos take by hand; `t
 
 ## [Unreleased]
 
+## [0.9.0] - 2026-10-14
+
+### Changed
+
+- Public CMake helpers respect the calling project's options before validating
+  arguments or creating targets, tests, or installation rules: `nom_app()` checks
+  `nom_build_apps`, `nom_python_module()` checks `nom_build_python`, test helpers
+  check `nom_build_tests`, and `nom_install_package()` checks `nom_install`.
+- `nom_library_usage_tests()` retains source-consumption coverage when installation
+  is disabled; its installation fixture and package-consumption test require
+  `nom_install`. Python wheel installation through `nom_python` remains independent
+  of native installation.
+- Advance the shared kit identifier to `0.9.0` so composed repositories report
+  older copies of the helper behavior.
+
+### Fixed
+
+- Explicitly enable Python in the imported-wheel fixture and its rejection checks.
+
+### Added
+
+- Integration coverage for disabled helpers, independent host/dependency options,
+  and library tests with installation enabled or disabled.
+
+### Upgrade
+
+- Call `nom_project_options()` after each `project()` before using kit helpers.
+  Helpers now enforce the resulting project-local flags internally.
+- Remove caller guards only when the helper handles the complete operation. Keep
+  guards for dependency discovery, direct `add_test()` calls, and operations on
+  targets or tests that a disabled helper does not create.
+- Remove `nom_install` guards around `nom_library_usage_tests()` to retain its
+  source-consumption test. Explicitly enable `<PROJECT>_BUILD_PYTHON` in Python
+  package projects; their `nom_python` component can still install with
+  `<PROJECT>_INSTALL=OFF`.
+
 ## [0.8.4] - 2026-10-13
 
 ### Changed

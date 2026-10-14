@@ -155,6 +155,7 @@ def check_rejected_import(args, source, build, kit, prefix, environment, diagnos
         [args.cmake, "-S", str(source / "wrapper"), "-B", str(build), "-G", "Ninja",
          f"-DCMAKE_CXX_COMPILER={args.compiler}", f"-DCMAKE_MAKE_PROGRAM={args.ninja}",
          f"-DPython_EXECUTABLE={args.python}", f"-DNOM_KIT_PATH={kit}",
+         "-DIMPORTED_WHEEL_BUILD_PYTHON=ON", "-DIMPORTED_WHEEL_INSTALL=OFF",
          f"-DCMAKE_PREFIX_PATH={prefix}", *definitions],
         capture_output=True, text=True, env=environment)
     output = result.stdout + result.stderr

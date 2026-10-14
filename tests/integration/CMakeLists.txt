@@ -5,6 +5,7 @@
 
 # template-only:begin
 find_package(Python3 3.10 REQUIRED COMPONENTS Interpreter)
+add_subdirectory(project_options)
 
 option(CMAKE_TEMPLATE_TEST_PYTHON_PACKAGE "Build and test installed native Python wheels" OFF)
 if(CMAKE_TEMPLATE_TEST_PYTHON_PACKAGE)
@@ -71,9 +72,7 @@ if(UNIX)
     set_tests_properties(${PROJECT_NAME}_relocation PROPERTIES LABELS integration)
 endif()
 
-if(nom_install)
-    nom_library_usage_tests(library_usage)
-endif()
+nom_library_usage_tests(library_usage)
 # The app build must collect its source config into the common build/config tree.
 if(TARGET ${PROJECT_NAME}_hello)
     add_test(NAME ${PROJECT_NAME}_collected_config

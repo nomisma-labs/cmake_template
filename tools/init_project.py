@@ -34,6 +34,7 @@ REMOVED = [
     "tests/integration/library_usage",
     "tests/integration/app_presets",
     "tests/integration/compile_options",
+    "tests/integration/project_options",
     "tests/integration/boost_package",
     "tests/integration/relocation",
     "tests/integration/python_package",
