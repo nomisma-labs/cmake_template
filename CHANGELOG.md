@@ -7,6 +7,43 @@ A release's `### Upgrade` section lists the steps derived repos take by hand; `t
 
 ## [Unreleased]
 
+### Changed
+
+- Tests run in parallel: the test presets set `CTEST_PARALLEL_LEVEL` empty, for one test per CPU,
+  and `-j1` runs them one at a time. cmake_template's `complete` tests take 5 s instead of 20 s.
+- A `dev` build runs the fast tests: the `dev` preset sets `NOM_SKIP_TEST_LABELS` to
+  `integration;kit`, whose tests build other projects, so `ctest` in `build/dev` leaves them out
+  with or without a preset. `complete` and the other presets run every test
+  ([docs/kit/build.md](docs/kit/build.md#tests)).
+- Bootstrap names how many tests of each label a preset runs, and records a result that needs no
+  fix as `NOTE`. The presets section of `docs/kit/build.md` says what each preset is for and why
+  `ci` optimizes.
+- The kit's own tests moved from `tests/integration/` to `tests/kit/`, labeled `kit`.
+  `boost_package` builds its package and source consumers at the same time.
+
+### Added
+
+- The `NOM_SKIP_TEST_LABELS` cache variable: the kit lists the tests carrying those labels in the
+  build tree's `CTestCustom.cmake`, which every ctest run there reads.
+- `tools/toolchain_updates.py`, run by bootstrap in cmake_template only: newer `g++-N` and
+  `clang-N` packages than the presets name, a newer Boost, apt upgrades for the installed tools,
+  and newer releases of the submodules, the Catch2 download and CMake. How to adopt one:
+  [docs/lab/toolchain.md](docs/lab/toolchain.md#keeping-the-toolchain-current).
+
+### Fixed
+
+- The git hooks test formats its sample code with the scratch repo's `.clang-format`, so it
+  passes with a build directory outside the source tree.
+- `tools/init_project.py` removes every kit test; new repos kept an unregistered copy of the git
+  hooks test.
+
+### Upgrade
+
+- Run `cmake --preset dev` once, or `./bootstrap.sh`, so an existing `build/dev` picks up
+  `NOM_SKIP_TEST_LABELS`; until then it runs every test.
+- `ctest --preset dev -L integration` now finds nothing. Where the repo's own docs or scripts
+  use it, write `ctest --preset complete -L integration` instead.
+
 ## [0.9.0] - 2026-10-14
 
 ### Changed

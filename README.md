@@ -41,7 +41,10 @@ is named `example` (`nom::example`); its code and tests exercise the build syste
   Boost's program options, filesystem and gzip streams (`build/dev/bin/boost_example --help`);
   and lab experiments in `apps/sandbox/`.
 - **Tests:** `tests/unit/` holds Catch2 suites that import the module; `tests/integration/`
-  checks library usage from a separate project and config installation. Use `ctest --preset dev -L unit` or `ctest --preset dev -L integration` to select a group.
+  checks library usage from a separate project and config installation; `tests/kit/` checks the
+  kit and its tools with throwaway projects and repos. They are labeled `unit`, `integration` and
+  `kit`: `ctest --preset dev` runs the unit tests, `ctest --preset complete` all of them, and
+  `ctest --preset complete -L kit` one label.
 - **Python package:** the optional `nomisma_example` wheel exposes the example C++ API and
   bundles its shared library. [Opt-in checks](#example-wheel-checks) cover source and
   installed-library builds.

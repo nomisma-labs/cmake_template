@@ -4,6 +4,7 @@
 """Build and run consumers of a static library that links the kit's Boost libraries privately."""
 
 import argparse
+from concurrent.futures import ThreadPoolExecutor
 from pathlib import Path
 import subprocess
 from tempfile import TemporaryDirectory
@@ -124,17 +125,26 @@ int main()
 
         build = root / 'build'
         prefix = root / 'prefix'
-        run(args.cmake, '-S', str(library), '-B', str(build), '-G', args.generator,
-            f'-DCMAKE_CXX_COMPILER={args.compiler}')
-        run(args.cmake, '--build', str(build), '--parallel', '2')
-        run(args.cmake, '--install', str(build), '--prefix', str(prefix))
-        for mode in ('package', 'source'):
+
+        def consume(mode: str) -> None:
             consumer_build = root / mode
             run(args.cmake, '-S', str(consumer), '-B', str(consumer_build), '-G', args.generator,
                 f'-DCMAKE_CXX_COMPILER={args.compiler}', f'-DMODE={mode}', f'-DCMAKE_PREFIX_PATH={prefix}')
             run(args.cmake, '--build', str(consumer_build), '--parallel', '2')
             run(str(consumer_build / 'check'))
             print(f'PASS: {mode} consumer links the library and its Boost libraries')
+
+        def install_and_consume() -> None:
+            run(args.cmake, '-S', str(library), '-B', str(build), '-G', args.generator,
+                f'-DCMAKE_CXX_COMPILER={args.compiler}')
+            run(args.cmake, '--build', str(build), '--parallel', '2')
+            run(args.cmake, '--install', str(build), '--prefix', str(prefix))
+            consume('package')
+
+        # The source consumer builds its own copy of the library, so it needn't wait for the install.
+        with ThreadPoolExecutor() as pool:
+            for job in [pool.submit(install_and_consume), pool.submit(consume, 'source')]:
+                job.result()
 
 
 if __name__ == '__main__':

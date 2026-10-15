@@ -8,4 +8,4 @@ add_test(NAME ${PROJECT_NAME}_project_options
         --compiler ${CMAKE_CXX_COMPILER}
         --generator "${CMAKE_GENERATOR}"
         --kit ${PROJECT_SOURCE_DIR}/cmake/kit)
-set_tests_properties(${PROJECT_NAME}_project_options PROPERTIES LABELS integration TIMEOUT 120)
+set_tests_properties(${PROJECT_NAME}_project_options PROPERTIES LABELS kit TIMEOUT 120)

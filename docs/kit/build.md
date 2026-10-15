@@ -10,12 +10,16 @@ to select one explicitly; `--help` lists the discovered names. For a personal pr
 matching build and test entries that reference its configure preset. CMake checks the compiler
 and generator from the preset rather than bootstrap guessing them from its name.
 Each run deletes only the selected build directories and previous `build/bootstrap/` logs.
+A `dev` build runs the fast tests; the other presets run every test ([Tests](#tests)).
 Python compatibility/imports, headers and formatting are always checked; naming is included when
 `clang` is selected. A failed check returns a nonzero exit code. Invalid arguments
 are rejected before cleanup. Bootstrap also enables the [git hooks](#git-hooks) for the clone.
+In cmake_template, a last step runs `tools/toolchain_updates.py`, which reports compilers and
+dependency releases newer than the repo uses; other repos don't have the script.
 
-Each step reports `PASS`, `FAIL` or `SKIP`, then a summary and next steps; independent checks
-continue after a failure, and only the current run's logs are kept under `build/bootstrap/`. A
+Each step reports `PASS`, `FAIL`, `SKIP` or `NOTE`, then a summary and next steps; independent
+checks continue after a failure, and a note needs no fix to pass. Only the current run's logs are
+kept under `build/bootstrap/`. A
 new repo reports its tests as skipped until it has some. Submodules at unexpected commits are
 reported, not reset. Initializing dependencies, or CMake's fallback download, may need network
 access. Builds use one job fewer than the CPU cores, at least one;
@@ -29,11 +33,12 @@ git submodule update --init --recursive   # once, after cloning
 cmake --preset dev                        # once: configure into build/dev
 cd build/dev
 ninja                                     # build; reruns cmake itself when a CMakeLists.txt changes
-ctest --output-on-failure                 # test; -R <regex> picks tests by name
+ctest --output-on-failure                 # the fast tests; -R <regex> picks tests by name
 bin/<app>                                 # run an app
 ```
 
-Other presets work the same way in `build/<preset>`. `cmake --workflow --preset <preset>`
+Other presets work the same way in `build/<preset>`; `build/complete` has every test, and
+`ctest -j` runs them in parallel there, as the test presets do. `cmake --workflow --preset <preset>`
 configures, builds and tests in one command; CI uses it.
 After changing the compiler, run `./bootstrap.sh` (or `./bootstrap.sh release` for Release)
 to clear both the main build and the nested integration-test builds that cache the compiler.
@@ -101,14 +106,27 @@ The presets hold the build settings that developers, CI, IDEs and agents share. 
 are in `cmake/kit/presets.json`; a repo's `CMakePresets.json` includes that file and can add
 presets of its own under other names.
 
-| Preset | Compiler and build type | Purpose |
-|---|---|---|
-| `dev` | GCC 16, Debug | daily work |
-| `complete` | GCC 16, Debug | every app, including experiments, regardless of its `BUILD_FOR` list |
-| `release` | GCC 16, Release | benchmarks and production builds |
-| `clang` | Clang 19, Debug | second compiler; its database feeds clangd and clang-tidy |
-| `asan` | Clang 19, Debug, AddressSanitizer + UBSan | memory and undefined-behaviour checks |
-| `ci` | GCC 16, RelWithDebInfo, warnings as errors | CI |
+| Preset | Compiler and build type | Tests | Purpose |
+|---|---|---|---|
+| `dev` | GCC 16, Debug | fast: all but `integration` and `kit` | daily work |
+| `complete` | GCC 16, Debug | all | every app, including experiments, regardless of its `BUILD_FOR` list |
+| `release` | GCC 16, Release | all | benchmarks and production builds |
+| `clang` | Clang 19, Debug | all | second compiler; its database feeds clangd and clang-tidy |
+| `asan` | Clang 19, Debug, AddressSanitizer + UBSan | all | memory errors and undefined behaviour in the code tests run |
+| `ci` | GCC 16, RelWithDebInfo, warnings as errors | all | the GitHub CI build |
+
+`./bootstrap.sh` runs every preset but `release`, which it runs only when named. GitHub CI builds
+`ci`, plus `clang` for the naming check.
+
+- `ci` is the gate: warnings fail it rather than the daily build. It optimizes because some of
+  GCC's warnings, such as `-Wmaybe-uninitialized`, `-Warray-bounds` and `-Wstringop-overflow`,
+  depend on analysis that only optimization runs; a Debug build misses them. It also tests the
+  optimized code with `NDEBUG`, as `release` ships it, while `dev` tests Debug with assertions.
+  Its debug info keeps a crash in CI readable.
+- `asan` builds the code instrumented: AddressSanitizer stops a test at an out-of-bounds access,
+  a use after free or a leak, and UBSan at undefined behaviour such as signed overflow or a
+  misaligned access. It only checks code that tests run, so it finds more as tests grow.
+  Library usage tests build their consumers with the same flags; GitHub CI doesn't run it.
 
 Executable names and package versions are recorded in [Toolchain](#toolchain). Current module
 and sanitizer validation is recorded in `cmake_template/docs/lab/toolchain.md`;
@@ -307,8 +325,7 @@ cross-toolchain binary compatibility is not implied.
   `core/` and `apps/`, when `nom_build_tests` is enabled. Suites import the library's primary
   module; there is one path through the public API.
 - `tests/integration/`: checks involving project boundaries or installation, labeled `integration`.
-  `app_presets/` verifies app build/install selection; `library_usage/` is a separate CMake project
-  that compiles, links and runs against this library.
+  `library_usage/` is a separate CMake project that compiles, links and runs against this library.
   `nom_library_usage_tests()` installs the main project into
   `build/<preset>/tests/integration/library_usage/install`, then builds and runs the test project
   against that package with `find_package` (`<project>_library_usage_package`), and from source
@@ -316,12 +333,28 @@ cross-toolchain binary compatibility is not implied.
   consumer, including rebuilding installed module interfaces in package mode. With `nom_install`
   OFF, only the source-consumption test is registered. With `nom_build_tests` OFF, neither mode
   is registered.
+- cmake_template's `tests/kit/`: tests of the kit and its tools themselves, labeled `kit`, such
+  as `app_presets/` for app build and install selection. Each builds throwaway projects or repos
+  of its own; new repos don't get them.
+
+The `dev` preset sets the cache variable `NOM_SKIP_TEST_LABELS` to `integration;kit`, the
+labels of the tests that build other projects and take seconds each. The kit lists the tests
+carrying them in the build tree's `CTestCustom.cmake`, so every ctest run in `build/dev` leaves
+them out, with or without a test preset. The other presets run every test; a personal preset can
+set its own list. The test presets run tests in parallel, one per CPU (they set
+`CTEST_PARALLEL_LEVEL` empty); in a build directory, `ctest -j` does the same. Fixtures
+(`FIXTURES_SETUP` and `FIXTURES_REQUIRED`) order tests that depend on each other, and
+`RUN_SERIAL` keeps a test that needs the whole machine alone.
 
 ```bash
-ctest --preset dev                   # all tests
-ctest --preset dev -L unit           # unit tests only
-ctest --preset dev -L integration    # integration tests, including required installation
+ctest --preset dev                        # the fast tests: unit, and any test without those labels
+ctest --preset complete                   # every test
+ctest --preset complete -L integration    # one label: unit, integration or kit
+ctest --preset complete -j1               # one test at a time
 ```
+
+A `dev` build has no integration or kit tests to select, so `ctest --preset dev -L integration`
+finds none.
 
 ## Install and use
 

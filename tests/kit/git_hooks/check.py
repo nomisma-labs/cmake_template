@@ -41,14 +41,14 @@ def said(result: subprocess.CompletedProcess, *texts: str) -> bool:
     return all(text in result.stdout + result.stderr for text in texts)
 
 
-def cpp(code: str, clang_format: str | None = None) -> str:
-    """A C++ file with the SPDX header; formatted when clang_format is given."""
+def cpp(code: str, clang_format: list[str] | None = None) -> str:
+    """A C++ file with the SPDX header; formatted when a clang-format command is given."""
     if clang_format:
         try:
-            code = subprocess.run([clang_format, '--assume-filename=file.cpp'], input=code,
+            code = subprocess.run([*clang_format, '--assume-filename=file.cpp'], input=code,
                                   capture_output=True, text=True, check=True).stdout
         except FileNotFoundError:
-            raise RuntimeError(f'{clang_format} not found: install clang-format 19 or set CLANG_FORMAT') from None
+            raise RuntimeError(f'{clang_format[0]} not found: install clang-format 19 or set CLANG_FORMAT') from None
     return ''.join(f'// {line}\n' for line in HEADER.splitlines()) + '\n' + code
 
 
@@ -56,10 +56,11 @@ def main() -> None:
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument('--source', required=True, help='the repo whose tools/kit/hooks to test')
     args = parser.parse_args()
-    clang_format = os.environ.get('CLANG_FORMAT', 'clang-format-19')
 
     with TemporaryDirectory(prefix='nomisma-git-hooks-') as temporary:
         repo = Path(temporary)
+        # The scratch repo's style, which the hooks check against, wherever the build directory is.
+        clang_format = [os.environ.get('CLANG_FORMAT', 'clang-format-19'), f'--style=file:{repo / ".clang-format"}']
         git(repo, 'init', '--quiet')
         for name in COPIED:
             (repo / name).parent.mkdir(parents=True, exist_ok=True)

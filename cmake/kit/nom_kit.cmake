@@ -42,3 +42,6 @@ include(${CMAKE_CURRENT_LIST_DIR}/deps/boost.cmake)
 # Implementation utilities shared by the public helpers.
 include(${CMAKE_CURRENT_LIST_DIR}/internal/target_settings.cmake)
 include(${CMAKE_CURRENT_LIST_DIR}/internal/python_runtime.cmake)
+
+# The build tree's test selection: NOM_SKIP_TEST_LABELS.
+include(${CMAKE_CURRENT_LIST_DIR}/internal/test_selection.cmake)

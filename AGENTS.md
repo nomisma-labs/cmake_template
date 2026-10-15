@@ -21,4 +21,8 @@ Rules for this repo alone follow below.
   `template-only:begin`/`template-only:end` comments; `tools/init_project.py` removes them.
   Template-owned files carry none.
 - The example's wheel checks: [README.md](README.md#example-wheel-checks).
+- `tests/kit/` tests the kit and its tools, labeled `kit`; `ctest --preset complete -L kit` runs them.
+- Bootstrap's last step reports newer compilers and dependency releases as a `NOTE`
+  (`tools/toolchain_updates.py`); [docs/lab/toolchain.md](docs/lab/toolchain.md#keeping-the-toolchain-current)
+  says how to adopt one.
 <!-- template-only:end -->

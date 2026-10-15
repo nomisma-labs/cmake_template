@@ -3,6 +3,42 @@
 Supported tools and versions are recorded in [Build: Toolchain](../kit/build.md#toolchain).
 The presets use GCC 16 for normal builds and Clang 19 for the second compiler and sanitizers.
 
+## Keeping the toolchain current
+
+The template moves to new compilers and dependency releases first, and every repo follows it.
+`./bootstrap.sh` here ends with `tools/toolchain_updates.py`, which compares what the repo uses
+with apt's packages and with upstream release tags, and records a `NOTE` when something is newer:
+
+```text
+[NOTE] Toolchain updates — Newer: Clang 22, Catch2 v3.16.1, CMake v4.4.4; build/bootstrap/…/step-12.log
+```
+
+The log lists each finding and, for a compiler, the files that name its current version. Run
+`python3 tools/toolchain_updates.py` on its own for the same report; `sudo apt update` first
+refreshes what apt knows. When a note appears, or at least once a month:
+
+1. Try the new version beside the current one, in a personal preset in `CMakeUserPresets.json`:
+   ```json
+   {
+     "version": 6,
+     "configurePresets": [
+       { "name": "clang22", "inherits": "clang", "cacheVariables": { "CMAKE_CXX_COMPILER": "clang++-22" } }
+     ],
+     "buildPresets": [{ "name": "clang22", "configurePreset": "clang22" }],
+     "testPresets": [{ "name": "clang22", "inherits": "base", "configurePreset": "clang22" }]
+   }
+   ```
+   `./bootstrap.sh clang22` builds and tests it. A new clang-format can reformat code in every
+   repo: `CLANG_FORMAT=clang-format-22 tools/kit/checks/format.sh` shows the difference, and
+   `RUN_CLANG_TIDY=run-clang-tidy-22` runs the naming check with the new clang-tidy.
+2. Record the verdict and any workaround here, with the versions, as the findings below do.
+3. To adopt it, change the files the report lists (presets, bootstrap, checks, the CI image and
+   the [toolchain table](../kit/build.md#toolchain)), run `./bootstrap.sh`, and release with an
+   `### Upgrade` step that names the packages to install. The CI image rebuilds when its
+   Dockerfile changes on `master`; the other repos get the change through their next sync.
+
+To stay on a version for now, note why here; the report keeps listing the newer one.
+
 ## Native modules
 
 The `nom.example` primary interface, exported partitions, implementation units and importing

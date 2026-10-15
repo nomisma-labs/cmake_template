@@ -191,7 +191,8 @@ fixture and installed-package test.
    both consumption modes; package consumers rebuild module interfaces for their own compiler.
 3. Add `nom_library_usage_tests(library_usage)` to `tests/integration/CMakeLists.txt`. The
    helper labels its tests `integration`. Keep other integration checks here too, with the same
-   label. Run either group with `ctest --preset dev -L unit` or `ctest --preset dev -L integration`.
+   label. `ctest --preset dev` runs the unit tests without them; `ctest --preset complete` runs
+   both, and `ctest --preset complete -L integration` runs these alone.
 
 ## A Python package
 
