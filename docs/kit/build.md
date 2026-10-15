@@ -200,7 +200,7 @@ The entry point provides:
 | `nom_lib(<name> [STATIC \| SHARED] [SOURCES …] [HEADERS …] [MODULES …] [BASE_DIR <dir>] [PUBLIC_DEPS …] [PRIVATE_DEPS …] [COMPILE_OPTIONS …])` | Library `<name>` plus alias `nom::<name>`. `MODULES` lists native interfaces and partitions; `SOURCES` lists implementation units and other compiled sources. File sets are rooted at `BASE_DIR` (default `core/`). Header-only macro or dependency adapters can be INTERFACE targets. Compile options are PRIVATE for compiled libraries and INTERFACE otherwise. |
 | `nom_app(<name> SOURCES … [DEPS …] [BUILD_FOR …] [COMPILE_OPTIONS …])` | Executable target `<project>_<name>`, binary `bin/<name>`; selects default build/install participation by preset; collects an adjacent `config/` directory. Compile options are PRIVATE. |
 | `nom_python_module(<target> MODULE_NAME <name> PACKAGE <package> SOURCES … [DEPS …] [RUNTIME_LIBRARIES …])` | Linux Python extension and explicitly bundled shared libraries, installed through the `nom_python` component. |
-| `nom_c2test(<suite> SOURCES … [DEPS …])` | Catch2 executable `<project>_<suite>`, registered with CTest. Needs `nom_find_catch2()`. |
+| `nom_c2test(<suite> SOURCES … [DEPS …] [LABELS …] [PROPERTIES …])` | Catch2 executable `<project>_<suite>`, registered with CTest and labeled `unit`; `LABELS` replaces the label, `PROPERTIES` sets other test properties. Needs `nom_find_catch2()`. |
 | `nom_library_usage_tests(<dir> [OPTIONS …])` | Integration tests: build and run a separate project using this library as an installed package and from source (see Tests). |
 | `nom_install_package(TARGETS … [DEPENDENCIES …])` | Install rules and `<project>-config.cmake`, so consumers can `find_package(<project>)` and link `nom::<target>`. The config finds `DEPENDENCIES` first, with the version and components a kit service found them with. |
 | `nom_require_submodule(<path>)` | Fails early, with the fix, when a submodule wasn't checked out. |
@@ -336,6 +336,14 @@ cross-toolchain binary compatibility is not implied.
 - cmake_template's `tests/kit/`: tests of the kit and its tools themselves, labeled `kit`, such
   as `app_presets/` for app build and install selection. Each builds throwaway projects or repos
   of its own; new repos don't get them.
+
+Labels are CTest's tags: a test can carry several and belongs to each. Give every test exactly
+one of the levels `unit`, `integration` and `kit`, plus any tags that help select it, such as
+`python_package`. `nom_c2test()` and `nom_library_usage_tests()` label their tests; a direct
+`add_test()` needs `set_tests_properties(… LABELS …)`. A test without a label belongs to no level:
+it runs in every build, but `ctest -L` never selects it. Keep a fixture's setup test and the tests
+that require it on the same level, since a build that leaves out the setup test runs the others
+without it.
 
 The `dev` preset sets the cache variable `NOM_SKIP_TEST_LABELS` to `integration;kit`, the
 labels of the tests that build other projects and take seconds each. The kit lists the tests

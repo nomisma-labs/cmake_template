@@ -7,4 +7,3 @@ nom_c2test(tests
         join_test.cxx
         settings_test.cxx
     DEPS nom::example)
-set_tests_properties(${PROJECT_NAME}_tests PROPERTIES LABELS unit)

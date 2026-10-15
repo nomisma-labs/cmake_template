@@ -23,6 +23,8 @@ A release's `### Upgrade` section lists the steps derived repos take by hand; `t
 
 ### Added
 
+- `nom_c2test()` labels its test `unit`. `LABELS` replaces that label list, and `PROPERTIES` sets
+  other test properties, so callers no longer spell `<project>_<suite>`.
 - The `NOM_SKIP_TEST_LABELS` cache variable: the kit lists the tests carrying those labels in the
   build tree's `CTestCustom.cmake`, which every ctest run there reads.
 - `tools/toolchain_updates.py`, run by bootstrap in cmake_template only: newer `g++-N` and
@@ -41,6 +43,9 @@ A release's `### Upgrade` section lists the steps derived repos take by hand; `t
 
 - Run `cmake --preset dev` once, or `./bootstrap.sh`, so an existing `build/dev` picks up
   `NOM_SKIP_TEST_LABELS`; until then it runs every test.
+- The `set_tests_properties(<project>_<suite> PROPERTIES LABELS unit)` line after each
+  `nom_c2test()` call can go, with any `if(nom_build_tests)` guard only it needed: the label is
+  now the default. Pass other test properties through `PROPERTIES`.
 - `ctest --preset dev -L integration` now finds nothing. Where the repo's own docs or scripts
   use it, write `ctest --preset complete -L integration` instead.
 
