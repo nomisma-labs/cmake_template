@@ -7,6 +7,8 @@ A release's `### Upgrade` section lists the steps derived repos take by hand; `t
 
 ## [Unreleased]
 
+## [0.10.0] - 2026-10-16
+
 ### Changed
 
 - Tests run in parallel: the test presets set `CTEST_PARALLEL_LEVEL` empty, for one test per CPU,
@@ -20,6 +22,8 @@ A release's `### Upgrade` section lists the steps derived repos take by hand; `t
   `ci` optimizes.
 - The kit's own tests moved from `tests/integration/` to `tests/kit/`, labeled `kit`.
   `boost_package` builds its package and source consumers at the same time.
+- Advance the shared kit identifier to `0.10.0` so composed repositories report older copies of
+  the test selection.
 
 ### Added
 
