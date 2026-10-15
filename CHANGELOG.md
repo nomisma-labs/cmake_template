@@ -7,6 +7,13 @@ A release's `### Upgrade` section lists the steps derived repos take by hand; `t
 
 ## [Unreleased]
 
+## [0.10.1] - 2026-10-16
+
+### Fixed
+
+- The 0.10.0 upgrade step about `dev` builds also covers `-R`: a pattern naming `integration` or
+  `kit` tests finds nothing in a `dev` build either.
+
 ## [0.10.0] - 2026-10-16
 
 ### Changed
@@ -50,8 +57,10 @@ A release's `### Upgrade` section lists the steps derived repos take by hand; `t
 - The `set_tests_properties(<project>_<suite> PROPERTIES LABELS unit)` line after each
   `nom_c2test()` call can go, with any `if(nom_build_tests)` guard only it needed: the label is
   now the default. Pass other test properties through `PROPERTIES`.
-- `ctest --preset dev -L integration` now finds nothing. Where the repo's own docs or scripts
-  use it, write `ctest --preset complete -L integration` instead.
+- A `dev` build no longer has the `integration` and `kit` tests, so commands that select them
+  there find nothing: `ctest --preset dev -L integration`, or `-R` with a pattern naming them. A
+  pattern that also matches other tests runs only those. Where the repo's own docs or scripts run
+  integration tests through `dev`, use `--preset complete` instead.
 
 ## [0.9.0] - 2026-10-14
 
