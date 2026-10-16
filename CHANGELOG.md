@@ -7,6 +7,22 @@ A release's `### Upgrade` section lists the steps derived repos take by hand; `t
 
 ## [Unreleased]
 
+### Changed
+
+- Catch2 3.16.1: `nom_find_catch2()` accepts an installed Catch2 3.16.1 or newer within major
+  version 3, so Ubuntu's 3.7.1 no longer counts; otherwise each build tree downloads and builds
+  3.16.1. [docs/kit/build.md](docs/kit/build.md#toolchain) installs it once per machine, and the CI
+  image builds it. Since Catch2 3.9, a suite's test cases run in random order.
+- cmake_template's toolchain report shows which Catch2 builds use, and compares the CI image's
+  Catch2 with the kit's.
+
+### Upgrade
+
+- Install Catch2 3.16.1 on each machine ([docs/kit/build.md](docs/kit/build.md#toolchain));
+  without it every build tree downloads and builds it.
+- A suite whose test cases depend on each other's order now fails intermittently. Fix the
+  dependency; `--order decl` runs the cases in declaration order meanwhile.
+
 ## [0.10.3] - 2026-10-17
 
 ### Changed

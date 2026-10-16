@@ -11,7 +11,8 @@ The template moves to new compilers and dependency releases first, and every rep
 - `Dependency updates`, which every repo runs: its git submodules against their upstream releases
   ([build.md](../kit/build.md#dependencies)).
 - `Toolchain updates`, from `tools/toolchain_updates.py`, here only: the compilers and Boost
-  against apt's packages, and the Catch2 download and the installed CMake against their releases.
+  against apt's packages, the Catch2 the kit requires and the installed CMake against their
+  releases, the Catch2 builds use, and the CI image's CMake and Catch2.
 
 ```text
 [PASS] Dependency updates — Current: nlohmann_json v3.12.0

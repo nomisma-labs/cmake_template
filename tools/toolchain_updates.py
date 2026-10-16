@@ -11,15 +11,17 @@ about it. The script reads what the repo uses from the presets and the kit, and 
 
 - Ubuntu packages, from apt's package lists: newer g++-N and clang-N packages than the presets
   name, a newer Boost than the one installed, and newer candidates for installed toolchain packages;
-- upstream release tags, through git ls-remote: the Catch2 release the kit downloads where Catch2
-  isn't installed, and CMake. Without a network these are reported unchecked;
-- the CMake the CI image pins in docker/ci/Dockerfile, which should be the one installed here.
+- upstream release tags, through git ls-remote: the Catch2 release the kit requires, and CMake.
+  Without a network these are reported unchecked;
+- the Catch2 builds here use: an installed one the kit accepts, or else a download per build tree;
+- the CMake and Catch2 the CI image pins in docker/ci/Dockerfile, which should match.
 
 Every repo's bootstrap checks its git submodules with tools/kit/checks/dependency_updates.py, whose
 report this script shares. The last line of output is a summary. Exit status: 0 when nothing is
 newer, 3 when something is, 4 when nothing could be checked, 1 on errors.
 """
 
+import glob
 import json
 import re
 import shutil
@@ -132,7 +134,7 @@ def check_packages(report: Report, compilers: dict[str, int]) -> None:
     tools = [f"g++-{gcc}"] if gcc else []
     if clang:
         tools += [f"{tool}-{clang}" for tool in ("clang", "clang-tools", "clang-tidy", "clang-format", "clangd")]
-    tools += ["cmake", "ninja-build", "catch2", "libboost-dev", "python3"]
+    tools += ["cmake", "ninja-build", "libboost-dev", "python3"]
     upgrades = [f"{name} {upstream(installed)} -> {upstream(candidate)}"
                 for name, (installed, candidate) in apt_policy(*tools).items()
                 if installed and candidate and installed != candidate]
@@ -149,28 +151,66 @@ def installed_cmake() -> str | None:
     return installed[1] if installed else None
 
 
-def check_tools(report: Report, cmake: str | None) -> None:
+def kit_catch2() -> tuple[str, str, str] | None:
+    """(repository, release tag, minimum version) of the Catch2 that cmake/kit/deps/catch2.cmake requires."""
+    kit = (ROOT / "cmake/kit/deps/catch2.cmake").read_text()
+    url = re.search(r"GIT_REPOSITORY\s+(\S+)", kit)
+    tag = re.search(r"GIT_TAG\s+(\S+)", kit)
+    minimum = re.search(r"FIND_PACKAGE_ARGS\s+(\d+(?:\.\d+)*)", kit)
+    return (url[1], tag[1], minimum[1]) if url and tag and minimum else None
+
+
+def check_tools(report: Report, cmake: str | None, catch2: tuple[str, str, str] | None) -> None:
     print("Upstream releases (git ls-remote)")
     checks = []  # (name, label, url, the version the repo uses)
-    catch2 = (ROOT / "cmake/kit/deps/catch2.cmake").read_text()
-    if (url := re.search(r"GIT_REPOSITORY\s+(\S+)", catch2)) and (tag := re.search(r"GIT_TAG\s+(\S+)", catch2)):
-        checks.append(("Catch2", "Catch2 download (cmake/kit/deps/catch2.cmake)", url[1], tag[1]))
+    if catch2:
+        checks.append(("Catch2", "Catch2 the kit requires (cmake/kit/deps/catch2.cmake)", catch2[0], catch2[1]))
     if cmake:
         checks.append(("CMake", "CMake installed", CMAKE_REPOSITORY, cmake))
     check_releases(report, checks)
 
 
-def check_ci_image(report: Report, cmake: str | None) -> None:
-    """The CI image pins its CMake package, which should be the version installed here."""
-    pin = re.search(r"^ARG CMAKE_VERSION=(\S+)", (ROOT / "docker/ci/Dockerfile").read_text(), re.MULTILINE)
-    if not pin or not cmake:
+def check_catch2(report: Report, catch2: tuple[str, str, str] | None) -> None:
+    """The Catch2 builds use: an installed package the kit accepts, or else a download per build tree."""
+    if not catch2:
         return
-    print("CI image (docker/ci/Dockerfile)")
-    pinned = upstream(pin[1])
-    if pinned == cmake:
-        report.current(f"CI image CMake {pinned}", f"CMake {pinned}, as installed here")
+    print("Catch2 builds use")
+    minimum = version(catch2[2])
+    installed = []
+    for directory in glob.glob("/usr/local/lib/cmake/Catch2") + glob.glob("/usr/local/lib/*/cmake/Catch2") + \
+            glob.glob("/usr/lib/cmake/Catch2") + glob.glob("/usr/lib/*/cmake/Catch2"):
+        config = Path(directory) / "Catch2ConfigVersion.cmake"
+        if match := re.search(r'set\(PACKAGE_VERSION "([\d.]+)"\)', config.read_text() if config.is_file() else ""):
+            installed.append((version(match[1]), directory))
+    # The package accepts the same major version at or above the requested one.
+    usable = sorted((number, directory) for number, directory in installed
+                    if number >= minimum and number[0] == minimum[0])
+    if usable:
+        number, directory = usable[-1]
+        report.current(f"Catch2 {dotted(number)} installed", f"Catch2 {dotted(number)} from {directory}")
     else:
-        report.update(f"CI image CMake {cmake}", f"CMake {pinned} ({pin[1]}); installed here: {cmake}")
+        found = ", ".join(f"{dotted(number)} in {directory}" for number, directory in sorted(installed)) or "none"
+        report.update(f"Catch2 {catch2[2]} not installed",
+                      f"no installed Catch2 {catch2[2]} or newer (found: {found}); each build tree downloads and "
+                      f"builds {catch2[1]}", "docs/kit/build.md#toolchain installs it")
+
+
+def check_ci_image(report: Report, cmake: str | None, catch2: tuple[str, str, str] | None) -> None:
+    """The CI image pins its CMake package and builds its Catch2, which should match here and the kit."""
+    dockerfile = (ROOT / "docker/ci/Dockerfile").read_text()
+    print("CI image (docker/ci/Dockerfile)")
+    if (pin := re.search(r"^ARG CMAKE_VERSION=(\S+)", dockerfile, re.MULTILINE)) and cmake:
+        pinned = upstream(pin[1])
+        if pinned == cmake:
+            report.current(f"CI image CMake {pinned}", f"CMake {pinned}, as installed here")
+        else:
+            report.update(f"CI image CMake {cmake}", f"CMake {pinned} ({pin[1]}); installed here: {cmake}")
+    if (pin := re.search(r"^ARG CATCH2_VERSION=(\S+)", dockerfile, re.MULTILINE)) and catch2:
+        wanted = catch2[1].removeprefix("v")
+        if pin[1] == wanted:
+            report.current(f"CI image Catch2 {wanted}", f"Catch2 {wanted}, as the kit requires")
+        else:
+            report.update(f"CI image Catch2 {wanted}", f"Catch2 {pin[1]}; the kit requires {wanted}")
 
 
 def main() -> int:
@@ -178,8 +218,10 @@ def main() -> int:
     report = Report()
     check_packages(report, preset_compilers())
     cmake = installed_cmake()
-    check_tools(report, cmake)
-    check_ci_image(report, cmake)
+    catch2 = kit_catch2()
+    check_tools(report, cmake, catch2)
+    check_catch2(report, catch2)
+    check_ci_image(report, cmake, catch2)
     return report.finish()
 
 
