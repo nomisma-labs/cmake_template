@@ -12,7 +12,8 @@ about it. The script reads what the repo uses from the presets and the kit, and 
 - Ubuntu packages, from apt's package lists: newer g++-N and clang-N packages than the presets
   name, a newer Boost than the one installed, and newer candidates for installed toolchain packages;
 - upstream release tags, through git ls-remote: the Catch2 release the kit downloads where Catch2
-  isn't installed, and CMake. Without a network these are reported unchecked.
+  isn't installed, and CMake. Without a network these are reported unchecked;
+- the CMake the CI image pins in docker/ci/Dockerfile, which should be the one installed here.
 
 Every repo's bootstrap checks its git submodules with tools/kit/checks/dependency_updates.py, whose
 report this script shares. The last line of output is a summary. Exit status: 0 when nothing is
@@ -141,24 +142,44 @@ def check_packages(report: Report, compilers: dict[str, int]) -> None:
         report.current("apt packages", "installed tools match apt's candidates (" + ", ".join(tools) + ")")
 
 
-def check_tools(report: Report) -> None:
+def installed_cmake() -> str | None:
+    """The version of the cmake on PATH, such as 4.4.4."""
+    cmake = shutil.which("cmake")
+    installed = re.search(r"cmake version (\d+(?:\.\d+)+)", output(cmake, "--version")) if cmake else None
+    return installed[1] if installed else None
+
+
+def check_tools(report: Report, cmake: str | None) -> None:
     print("Upstream releases (git ls-remote)")
     checks = []  # (name, label, url, the version the repo uses)
     catch2 = (ROOT / "cmake/kit/deps/catch2.cmake").read_text()
     if (url := re.search(r"GIT_REPOSITORY\s+(\S+)", catch2)) and (tag := re.search(r"GIT_TAG\s+(\S+)", catch2)):
         checks.append(("Catch2", "Catch2 download (cmake/kit/deps/catch2.cmake)", url[1], tag[1]))
-    if cmake := shutil.which("cmake"):
-        installed = re.search(r"cmake version (\d+(?:\.\d+)+)", output(cmake, "--version"))
-        if installed:
-            checks.append(("CMake", "CMake installed", CMAKE_REPOSITORY, installed[1]))
+    if cmake:
+        checks.append(("CMake", "CMake installed", CMAKE_REPOSITORY, cmake))
     check_releases(report, checks)
+
+
+def check_ci_image(report: Report, cmake: str | None) -> None:
+    """The CI image pins its CMake package, which should be the version installed here."""
+    pin = re.search(r"^ARG CMAKE_VERSION=(\S+)", (ROOT / "docker/ci/Dockerfile").read_text(), re.MULTILINE)
+    if not pin or not cmake:
+        return
+    print("CI image (docker/ci/Dockerfile)")
+    pinned = upstream(pin[1])
+    if pinned == cmake:
+        report.current(f"CI image CMake {pinned}", f"CMake {pinned}, as installed here")
+    else:
+        report.update(f"CI image CMake {cmake}", f"CMake {pinned} ({pin[1]}); installed here: {cmake}")
 
 
 def main() -> int:
     print("Toolchain updates for cmake_template (docs/lab/toolchain.md#keeping-the-toolchain-current)\n")
     report = Report()
     check_packages(report, preset_compilers())
-    check_tools(report)
+    cmake = installed_cmake()
+    check_tools(report, cmake)
+    check_ci_image(report, cmake)
     return report.finish()
 
 

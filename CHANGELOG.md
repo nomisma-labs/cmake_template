@@ -7,6 +7,13 @@ A release's `### Upgrade` section lists the steps derived repos take by hand; `t
 
 ## [Unreleased]
 
+### Changed
+
+- CMake 4.4.4 from Kitware's apt repository, locally and in the CI image, which pins its version
+  (`CMAKE_VERSION` in `docker/ci/Dockerfile`). [docs/kit/build.md](docs/kit/build.md#toolchain)
+  shows how to add the repository to a machine.
+- cmake_template's toolchain report notes when the CI image's CMake and the installed one differ.
+
 ## [0.10.2] - 2026-10-17
 
 ### Added
