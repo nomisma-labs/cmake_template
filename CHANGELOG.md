@@ -7,6 +7,18 @@ A release's `### Upgrade` section lists the steps derived repos take by hand; `t
 
 ## [Unreleased]
 
+### Added
+
+- Every repo's bootstrap reports git submodules recorded at an older release than their upstream's
+  newest, as a `NOTE`: `tools/kit/checks/dependency_updates.py` compares each submodule's release
+  tag with its remote's. An unreachable remote, or a recorded commit that isn't a release, is
+  reported unchecked, as a `SKIP` when nothing could be checked.
+
+### Changed
+
+- cmake_template's `tools/toolchain_updates.py` no longer covers submodules, and shares the
+  report code of the new check.
+
 ## [0.10.1] - 2026-10-16
 
 ### Fixed

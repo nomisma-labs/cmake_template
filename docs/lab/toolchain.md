@@ -6,11 +6,16 @@ The presets use GCC 16 for normal builds and Clang 19 for the second compiler an
 ## Keeping the toolchain current
 
 The template moves to new compilers and dependency releases first, and every repo follows it.
-`./bootstrap.sh` here ends with `tools/toolchain_updates.py`, which compares what the repo uses
-with apt's packages and with upstream release tags, and records a `NOTE` when something is newer:
+`./bootstrap.sh` here ends with two reports, recorded as a `NOTE` when something is newer:
+
+- `Dependency updates`, which every repo runs: its git submodules against their upstream releases
+  ([build.md](../kit/build.md#dependencies)).
+- `Toolchain updates`, from `tools/toolchain_updates.py`, here only: the compilers and Boost
+  against apt's packages, and the Catch2 download and the installed CMake against their releases.
 
 ```text
-[NOTE] Toolchain updates — Newer: Clang 22, Catch2 v3.16.1, CMake v4.4.4; build/bootstrap/…/step-12.log
+[PASS] Dependency updates — Current: nlohmann_json v3.12.0
+[NOTE] Toolchain updates — Newer: Clang 22, Catch2 v3.16.1, CMake v4.4.4; build/bootstrap/…/step-24.log
 ```
 
 The log lists each finding and, for a compiler, the files that name its current version. Run

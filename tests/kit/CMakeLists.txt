@@ -64,6 +64,11 @@ add_test(NAME ${PROJECT_NAME}_test_selection
         --kit ${PROJECT_SOURCE_DIR}/cmake/kit)
 set_tests_properties(${PROJECT_NAME}_test_selection PROPERTIES LABELS kit)
 
+add_test(NAME ${PROJECT_NAME}_dependency_updates
+    COMMAND ${Python3_EXECUTABLE} ${CMAKE_CURRENT_SOURCE_DIR}/dependency_updates/check.py
+        --source ${PROJECT_SOURCE_DIR})
+set_tests_properties(${PROJECT_NAME}_dependency_updates PROPERTIES LABELS kit)
+
 add_test(NAME ${PROJECT_NAME}_template_sync
     COMMAND ${Python3_EXECUTABLE} ${CMAKE_CURRENT_SOURCE_DIR}/template_sync/check.py
         --script ${PROJECT_SOURCE_DIR}/tools/kit/sync_template.py)
