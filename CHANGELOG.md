@@ -7,6 +7,8 @@ A release's `### Upgrade` section lists the steps derived repos take by hand; `t
 
 ## [Unreleased]
 
+## [0.10.2] - 2026-10-17
+
 ### Added
 
 - Every repo's bootstrap reports git submodules recorded at an older release than their upstream's
