@@ -7,6 +7,21 @@ A release's `### Upgrade` section lists the steps derived repos take by hand; `t
 
 ## [Unreleased]
 
+### Changed
+
+- Clang 22 for the `clang` and `asan` presets, the checks (`clang-format-22`, `clang-tidy-22`,
+  `run-clang-tidy-22`) and the CI image, instead of Clang 19. clang-format 22 formats our code
+  exactly as 19 did. Clang 22 builds modules with reduced BMIs by default, and since Clang 21
+  `-fsanitize=undefined` no longer includes `vptr`. Validation:
+  [docs/lab/toolchain.md](docs/lab/toolchain.md#clang-22).
+
+### Upgrade
+
+- Install the Clang 22 tools on each machine:
+  `sudo apt install clang-22 clang-tools-22 clang-tidy-22 clang-format-22 clangd-22`.
+- Point the editor's clangd at `/usr/bin/clangd-22`, which reads the `clang` preset's database.
+- Run `./bootstrap.sh` once: build folders configured with Clang 19 need a fresh start.
+
 ## [0.10.4] - 2026-10-17
 
 ### Changed

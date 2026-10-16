@@ -1,6 +1,7 @@
 # Third-party code with CMake and modules
 
-Updated: 2026-10-13. The findings below describe the current GCC 16/Clang 19 toolchain.
+Updated: 2026-10-17. The findings below were validated with GCC 16 and Clang 19; the template's
+builds and tests that cover them also pass with Clang 22 ([toolchain.md](toolchain.md#clang-22)).
 
 ## nlohmann_json in a module's global module fragment
 

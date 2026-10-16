@@ -1,7 +1,7 @@
 # Toolchain findings
 
 Supported tools and versions are recorded in [Build: Toolchain](../kit/build.md#toolchain).
-The presets use GCC 16 for normal builds and Clang 19 for the second compiler and sanitizers.
+The presets use GCC 16 for normal builds and Clang 22 for the second compiler and sanitizers.
 
 ## Keeping the toolchain current
 
@@ -16,7 +16,7 @@ The template moves to new compilers and dependency releases first, and every rep
 
 ```text
 [PASS] Dependency updates — Current: nlohmann_json v3.12.0
-[NOTE] Toolchain updates — Newer: Clang 22, Catch2 v3.16.1, CMake v4.4.4; build/bootstrap/…/step-24.log
+[NOTE] Toolchain updates — Newer: Clang 23, CMake v4.5.0; build/bootstrap/…/step-24.log
 ```
 
 The log lists each finding and, for a compiler, the files that name its current version. Run
@@ -28,15 +28,16 @@ refreshes what apt knows. When a note appears, or at least once a month:
    {
      "version": 6,
      "configurePresets": [
-       { "name": "clang22", "inherits": "clang", "cacheVariables": { "CMAKE_CXX_COMPILER": "clang++-22" } }
+       { "name": "clang23", "inherits": "clang", "cacheVariables": { "CMAKE_CXX_COMPILER": "clang++-23" } }
      ],
-     "buildPresets": [{ "name": "clang22", "configurePreset": "clang22" }],
-     "testPresets": [{ "name": "clang22", "inherits": "base", "configurePreset": "clang22" }]
+     "buildPresets": [{ "name": "clang23", "configurePreset": "clang23" }],
+     "testPresets": [{ "name": "clang23", "inherits": "base", "configurePreset": "clang23" }]
    }
    ```
-   `./bootstrap.sh clang22` builds and tests it. A new clang-format can reformat code in every
-   repo: `CLANG_FORMAT=clang-format-22 tools/kit/checks/format.sh` shows the difference, and
-   `RUN_CLANG_TIDY=run-clang-tidy-22` runs the naming check with the new clang-tidy.
+   `./bootstrap.sh clang23` builds and tests it; an `asan23` preset inheriting `asan` covers the
+   sanitizers the same way. A new clang-format can reformat code in every repo:
+   `CLANG_FORMAT=clang-format-23 tools/kit/checks/format.sh` shows the difference, and
+   `RUN_CLANG_TIDY=run-clang-tidy-23` runs the naming check with the new clang-tidy.
 2. Record the verdict and any workaround here, with the versions, as the findings below do.
 3. To adopt it, change the files the report lists (presets, bootstrap, checks, the CI image and
    the [toolchain table](../kit/build.md#toolchain)), run `./bootstrap.sh`, and release with an
@@ -48,7 +49,7 @@ To stay on a version for now, note why here; the report keeps listing the newer 
 ## Native modules
 
 The `nom.example` primary interface, exported partitions, implementation units and importing
-apps and tests build on GCC 16 and Clang 19. Library usage tests cover both source and installed
+apps and tests build on GCC 16 and Clang 22. Library usage tests cover both source and installed
 package consumption; installed consumers build their own compiler-specific BMIs. The sandbox
 geometry module exercises a native interface and partition with the `complete` preset.
 
@@ -62,9 +63,11 @@ cmake --workflow --preset complete
 
 ## Sanitizers
 
-The `asan` preset uses Clang 19 with AddressSanitizer and UBSan:
+The `asan` preset uses Clang 22 with AddressSanitizer and UBSan:
 `-fsanitize=address,undefined -fno-sanitize-recover=undefined -fno-omit-frame-pointer`.
-It covers the native-module example and importing consumers.
+It covers the native-module example and importing consumers. Since Clang 21, `undefined` no
+longer includes `vptr`, the dynamic type checks of objects with virtual functions; our code has
+none.
 
 ```bash
 cmake --workflow --preset asan
@@ -84,7 +87,7 @@ The `dev` and `clang` presets generate compilation databases. For the same impor
 
 ```text
 g++-16 -std=c++23 -fmodules-ts -fmodule-mapper=…/main.cpp.o.modmap -fdeps-format=p1689r5 … -c main.cpp
-clang++-19 -std=c++23 @…/main.cpp.o.modmap … -c main.cpp
+clang++-22 -std=c++23 @…/main.cpp.o.modmap … -c main.cpp
 ```
 
 Use `build/clang/compile_commands.json` for Clang tools; the GCC database contains module flags
@@ -92,9 +95,26 @@ they cannot use. `.clangd` selects the Clang database for the editor.
 
 `tools/kit/checks/naming.sh` configures the `clang` preset with `-DNOM_BUILD_PRESET=complete`, then
 builds it so that module BMIs are available, including those used by sandbox apps. It runs
-`run-clang-tidy-19` over the native module units and importers in `core/`, `apps/` and `tests/`
+`run-clang-tidy-22` over the native module units and importers in `core/`, `apps/` and `tests/`
 using that database. The naming check passes for the current native-module example and
 generated-repository recipe.
 
-clangd-19 with `--experimental-modules-support` in VS Code, and gdb on importing code, remain
-checklist items to validate.
+`clangd-22 --experimental-modules-support --check=apps/hello/main.cpp` reads an importing file
+without errors, using the `clang` database. Using clangd in VS Code, and gdb on importing code,
+remain checklist items to validate.
+
+## Clang 22
+
+Validated on 2026-10-17, moving from Clang 19.1.7 to Ubuntu's 22.1.2 (`clang-22` packages) with
+GCC 16, CMake 4.4.4 and Catch2 3.16.1, in cmake_template, assembly and json_config, before the
+presets changed (through `clang22` and `asan22` personal presets):
+
+- Builds and every test pass with and without the sanitizers: 17, 8 and 21 tests. Compiler
+  warnings stay at 0. The tests cover installed-module consumers, which rebuild module
+  interfaces, and the kit's own module projects, so Clang 22's new default of reduced BMIs (the
+  smaller compiled module interfaces) causes no regression here.
+- clang-format 22 reads `.clang-format` without diagnostics, mapping `AlignAfterOpenBracket:
+  Align` to `true` and `BinPackParameters: false` to `OnePerLine`, and formats all 55 C++ files
+  exactly as clang-format 19 did.
+- The clang-tidy 22 naming check reports nothing over 15, 15 and 19 files.
+- clangd 22 checks `apps/hello/main.cpp` without errors, in 3.9 s against clangd 19's 5.2 s.
