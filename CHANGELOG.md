@@ -7,6 +7,8 @@ A release's `### Upgrade` section lists the steps derived repos take by hand; `t
 
 ## [Unreleased]
 
+## [0.10.4] - 2026-10-17
+
 ### Changed
 
 - Catch2 3.16.1: `nom_find_catch2()` accepts an installed Catch2 3.16.1 or newer within major
@@ -15,6 +17,8 @@ A release's `### Upgrade` section lists the steps derived repos take by hand; `t
   image builds it. Since Catch2 3.9, a suite's test cases run in random order.
 - cmake_template's toolchain report shows which Catch2 builds use, and compares the CI image's
   Catch2 with the kit's.
+- Advance the shared kit identifier to `0.10.4` so composed repositories report older copies of
+  `nom_find_catch2()`.
 
 ### Upgrade
 
