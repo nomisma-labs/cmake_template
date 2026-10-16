@@ -7,6 +7,8 @@ A release's `### Upgrade` section lists the steps derived repos take by hand; `t
 
 ## [Unreleased]
 
+## [0.10.3] - 2026-10-17
+
 ### Changed
 
 - CMake 4.4.4 from Kitware's apt repository, locally and in the CI image, which pins its version
