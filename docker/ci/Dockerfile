@@ -26,7 +26,7 @@ RUN chmod 644 /usr/share/keyrings/kitware-archive-keyring.asc \
  && apt-get install -y --no-install-recommends \
       git python3 python3-venv python3-dev \
       g++-16 cmake=${CMAKE_VERSION} cmake-data=${CMAKE_VERSION} ninja-build \
-      clang-19 clang-tools-19 clang-tidy-19 clang-format-19 clangd-19 \
+      clang-22 clang-tools-22 clang-tidy-22 clang-format-22 clangd-22 \
       libboost-log-dev libboost-iostreams-dev libboost-filesystem-dev \
       libboost-thread-dev libboost-date-time-dev libboost-program-options-dev libboost-url-dev \
       libssl-dev libfmt-dev nlohmann-json3-dev zlib1g-dev capnproto libcapnp-dev \
