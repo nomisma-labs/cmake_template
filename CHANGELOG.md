@@ -7,6 +7,8 @@ A release's `### Upgrade` section lists the steps derived repos take by hand; `t
 
 ## [Unreleased]
 
+## [0.11.0] - 2026-10-17
+
 ### Changed
 
 - Clang 22 for the `clang` and `asan` presets, the checks (`clang-format-22`, `clang-tidy-22`,
