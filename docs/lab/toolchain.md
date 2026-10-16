@@ -43,6 +43,10 @@ refreshes what apt knows. When a note appears, or at least once a month:
    the [toolchain table](../kit/build.md#toolchain)), run `./bootstrap.sh`, and release with an
    `### Upgrade` step that names the packages to install. The CI image rebuilds when its
    Dockerfile changes on `master`; the other repos get the change through their next sync.
+   CI's runs for a push start on the image published before it. When the change needs tools the
+   old image lacks, such as a new clang-format for the checks, push the Dockerfile commit alone
+   first, wait for the `ci-image` workflow to publish, then push the rest with the release tag.
+   Otherwise push everything together and re-run CI once the new image is published.
 
 To stay on a version for now, note why here; the report keeps listing the newer one.
 
