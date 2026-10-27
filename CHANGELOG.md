@@ -7,10 +7,15 @@ A release's `### Upgrade` section lists the steps derived repos take by hand; `t
 
 ## [Unreleased]
 
+## [0.11.1] - 2026-10-27
+
 ### Changed
 
 - `nom_app(<name>)` creates the target `<name>` directly, matching `nom_lib()`. Callers can
   apply target properties without reconstructing a project prefix; binary names stay the same.
+- Advance the shared kit identifier to `0.11.1` so composed repositories report older copies
+  with different app target naming.
+- Clarify dependency ownership in derived repositories and the image-first toolchain push order.
 
 ### Upgrade
 
