@@ -7,6 +7,8 @@ A release's `### Upgrade` section lists the steps derived repos take by hand; `t
 
 ## [Unreleased]
 
+## [0.11.2] - 2026-10-28
+
 ### Added
 
 - Opt-in C++23 standard-library modules through `cmake/kit/std_modules.cmake` and
