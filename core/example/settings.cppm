@@ -1,14 +1,9 @@
 // SPDX-FileCopyrightText: 2026 Alexey Tkachenko
 // SPDX-License-Identifier: LicenseRef-Nomisma-Labs-Proprietary
 
-module;
-
-#include <expected>
-#include <filesystem>
-#include <string>
-#include <string_view>
-
 export module nom.example:settings;
+
+import std;
 
 export namespace nom::example
 {

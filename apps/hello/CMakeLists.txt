@@ -2,3 +2,5 @@
 # SPDX-License-Identifier: LicenseRef-Nomisma-Labs-Proprietary
 
 nom_app(hello SOURCES main.cpp DEPS nom::example)
+
+nom_enable_std_modules(hello)

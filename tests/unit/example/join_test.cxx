@@ -3,8 +3,7 @@
 
 #include <catch2/catch_test_macros.hpp>
 
-#include <string>
-#include <type_traits>
+import std;
 
 import nom.example;
 

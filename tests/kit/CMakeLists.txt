@@ -1,12 +1,13 @@
 # SPDX-FileCopyrightText: 2026 Alexey Tkachenko
 # SPDX-License-Identifier: LicenseRef-Nomisma-Labs-Proprietary
 
-# Tests of the shared kit and tools themselves, labeled kit. Each one builds throwaway projects or
-# repos of its own with this build's compiler; none uses this build's targets. New repos don't get
-# them (tools/init_project.py).
+# Tests of the shared kit and tools themselves, labeled kit. Most build throwaway projects or
+# repos with this build's compiler; std_modules exercises targets directly in this build.
+# New repos do not get these tests (tools/init_project.py).
 
 find_package(Python3 3.10 REQUIRED COMPONENTS Interpreter)
 add_subdirectory(project_options)
+add_subdirectory(std_modules)
 
 option(CMAKE_TEMPLATE_TEST_PYTHON_PACKAGE "Build and test installed native Python wheels" OFF)
 if(CMAKE_TEMPLATE_TEST_PYTHON_PACKAGE)

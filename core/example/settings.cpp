@@ -5,14 +5,9 @@ module;
 
 #include <nlohmann/json.hpp>
 
-#include <expected>
-#include <filesystem>
-#include <fstream>
-#include <iterator>
-#include <string>
-#include <string_view>
-
 module nom.example;
+
+import std;
 
 namespace nom::example
 {

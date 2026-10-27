@@ -4,7 +4,10 @@
 # A separate project that uses example the way another repo would. nom_library_usage_tests()
 # in tests/integration/CMakeLists.txt builds it in both modes; it is not part of the main build.
 
-cmake_minimum_required(VERSION 3.30)
+cmake_minimum_required(VERSION 4.4)
+
+# Enable detection in the consumer before project(), not in the dependency after it.
+include(${CMAKE_CURRENT_LIST_DIR}/../../../cmake/kit/std_modules.cmake)
 project(example_library_usage LANGUAGES CXX)
 
 set(CMAKE_CXX_STANDARD 23)
@@ -25,4 +28,5 @@ enable_testing()
 
 add_executable(use_library use_library_test.cxx)
 target_link_libraries(use_library PRIVATE nom::example)
+nom_enable_std_modules(use_library)
 add_test(NAME use_library COMMAND use_library)

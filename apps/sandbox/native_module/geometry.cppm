@@ -1,11 +1,9 @@
 // SPDX-FileCopyrightText: 2026 Alexey Tkachenko
 // SPDX-License-Identifier: LicenseRef-Nomisma-Labs-Proprietary
 
-module;
-
-#include <cmath>
-
 export module nom.sandbox.geometry;
+
+import std;
 
 export import :point;
 

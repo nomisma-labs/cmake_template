@@ -7,3 +7,5 @@ nom_python_module(cmake_template_python
     SOURCES native.cpp
     DEPS nom::example
     RUNTIME_LIBRARIES nom::example)
+
+nom_enable_std_modules(cmake_template_python)

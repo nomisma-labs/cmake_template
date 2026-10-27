@@ -1,10 +1,9 @@
 // SPDX-FileCopyrightText: 2026 Alexey Tkachenko
 // SPDX-License-Identifier: LicenseRef-Nomisma-Labs-Proprietary
 
-// Include standard declarations used directly, before importing the library module.
-#include <expected>
-#include <string>
-#include <type_traits>
+// Import standard declarations used directly, as well as the library module.
+
+import std;
 
 import nom.example;
 

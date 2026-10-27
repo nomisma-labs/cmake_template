@@ -66,4 +66,18 @@ cmake --preset ci -DCMAKE_TEMPLATE_TEST_PYTHON_PACKAGE=ON \
   -DNOM_PYTHON_EXECUTABLE="$PWD/build/python-env/bin/python"
 ctest --preset ci -R python_package --output-on-failure
 ```
+## Standard-library module review
+
+The examples use C++23 `import std;` with CMake 4.4.x and the shared
+[`nom_enable_std_modules`](cmake/kit/std_modules.cmake) helper. The focused
+[test](tests/kit/std_modules/std_modules_test.cxx) covers standard containers and algorithms
+across a module/implementation boundary, template instantiation in the consumer, and Catch2
+macro headers alongside imports. The existing library usage tests cover both `FetchContent`
+and installed-package consumers. Setup and limitations are in [the build guide](docs/kit/build.md#modules).
+
+```sh
+cmake --fresh --preset complete
+cmake --build --preset complete
+ctest --test-dir build/complete --output-on-failure -R 'std_modules|library_usage'
+```
 <!-- template-only:end -->

@@ -1,7 +1,7 @@
 // SPDX-FileCopyrightText: 2026 Alexey Tkachenko
 // SPDX-License-Identifier: LicenseRef-Nomisma-Labs-Proprietary
 
-#include <cstdio>
+import std;
 
 import nom.sandbox.geometry;
 

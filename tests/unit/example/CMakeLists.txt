@@ -7,3 +7,5 @@ nom_c2test(tests
         join_test.cxx
         settings_test.cxx
     DEPS nom::example)
+
+nom_enable_std_modules(${PROJECT_NAME}_tests)

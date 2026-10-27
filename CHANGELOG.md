@@ -7,6 +7,35 @@ A release's `### Upgrade` section lists the steps derived repos take by hand; `t
 
 ## [Unreleased]
 
+### Added
+
+- Opt-in C++23 standard-library modules through `cmake/kit/std_modules.cmake` and
+  `nom_enable_std_modules(target)`, with CMake 4.4 toolchain validation and a vendor-only
+  Clang warning exception.
+- A focused Catch2 test for standard types crossing module interfaces/implementation units
+  and standard-library templates instantiated by a consumer.
+
+### Changed
+
+- Migrate the example modules, apps and tests to `import std;`, retaining textual macro and
+  third-party headers. Source and installed-package usage tests enable std module detection
+  in the consumer before CXX detection.
+- Require CMake 4.4.x for standard-library module support and update the shared usage rules.
+
+### Upgrade
+
+- Use CMake 4.4.x, Ninja and the supported GCC 16 or Clang 22 toolchain with libstdc++ 16 module
+  sources. Raise the repository's root CMake minimum and preset minimum to 4.4.
+- Include `cmake/kit/std_modules.cmake` before the first `project()` enabling CXX, including in
+  outer source/package consumers. The kit files sync automatically; repository-owned root
+  and consumer CMake files need this edit by hand.
+- Call `nom_enable_std_modules(target)` on each existing compiled target importing `std` or
+  consuming modules that import it. Guard calls when optional apps/tests/extensions may be
+  disabled. Replace direct standard-library includes with `import std;` where possible,
+  retaining macro headers and third-party includes before imports.
+- Start with a fresh configure (`cmake --fresh --preset dev`, or `./bootstrap.sh`) because
+  old build trees cached compiler detection without standard-library module support.
+
 ## [0.11.1] - 2026-10-27
 
 ### Changed

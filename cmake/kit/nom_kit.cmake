@@ -27,6 +27,9 @@ if(_nom_kit_loaded)
 endif()
 set_property(GLOBAL PROPERTY NOM_KIT_VERSION ${_nom_kit_version})
 
+# The pre-project entry point also supplies the per-target import std helper.
+include(${CMAKE_CURRENT_LIST_DIR}/std_modules.cmake)
+
 # Client-facing project, target, testing, installation and Python helpers.
 include(${CMAKE_CURRENT_LIST_DIR}/api/project.cmake)
 include(${CMAKE_CURRENT_LIST_DIR}/api/targets.cmake)

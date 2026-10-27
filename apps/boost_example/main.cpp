@@ -12,12 +12,7 @@
 #include <boost/iostreams/filtering_stream.hpp>
 #include <boost/program_options.hpp>
 
-#include <exception>
-#include <expected>
-#include <iostream>
-#include <stdexcept>
-#include <string>
-#include <string_view>
+import std;
 
 import nom.example;
 

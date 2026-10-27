@@ -3,3 +3,5 @@
 
 nom_app(boost_example SOURCES main.cpp
     DEPS nom::example Boost::program_options Boost::filesystem Boost::iostreams)
+
+nom_enable_std_modules(boost_example)

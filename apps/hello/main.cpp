@@ -4,9 +4,7 @@
 // Usage: hello [build/dev/config/hello/settings.json]
 #include <example/macros.h>
 
-#include <expected>
-#include <filesystem>
-#include <string>
+import std;
 
 import nom.example;
 

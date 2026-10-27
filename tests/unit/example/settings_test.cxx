@@ -3,10 +3,7 @@
 
 #include <catch2/catch_test_macros.hpp>
 
-#include <expected>
-#include <filesystem>
-#include <fstream>
-#include <string>
+import std;
 
 import nom.example;
 
