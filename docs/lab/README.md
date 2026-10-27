@@ -38,7 +38,7 @@ assembly, its only user, does. See [the Metal findings](third_party_in_modules.m
 | 4 | Third-party headers in the global module fragment | Exporting a nlohmann 3.12 alias warns on GCC 16 and fails with `-Werror`; JSON stays private. The exported Metal typelist alias passed on GCC 16 and Clang 19. Boost 1.90 headers pass in an implementation unit's global module fragment and before imports. | [third_party_in_modules.md](third_party_in_modules.md) |
 | 5 | Template-heavy code through a module (relay-like typelist dispatch on Metal) | Basic native typelist alias instantiation passes in unit, source and installed-package consumers; the alias used Metal until 0.6.0 and now uses the standard library. Relay-style filtering/dispatch on Metal lives in assembly's `nom.assembly`; performance remains to do. | `core/example/types.cppm`, [Metal findings](third_party_in_modules.md#metal-through-a-native-module) |
 | 6 | Installed modules: consumer builds its own BMIs from an installed package | The native importing consumer passes in both source and installed-package modes on GCC 16 and Clang 22. | `tests/integration/library_usage/` (`use_library`) |
-| 7 | `import std;` toolchain support | Future toolchain investigation. | |
+| 7 | `import std;` toolchain support | Implemented in v0.11.2 with CMake 4.4.x, GCC 16 or Clang 22, and libstdc++ 16 module sources. The complete and Clang presets pass, including source/package consumers and standard-library templates across module boundaries. | `cmake/kit/std_modules.cmake`, `tests/kit/std_modules/`, [module setup](../kit/build.md#modules) |
 | 8 | Inlining across module boundaries (hot path) | To do | |
 | 9 | Tooling with modules: clangd, clang-tidy, gdb | clang-tidy naming checks pass for native module units and importers, including the generated-repository recipe; `clangd-22 --check` reads an importer without errors; clangd in the editor and gdb to do. | [toolchain.md](toolchain.md) |
 | 10 | Build time: headers vs modules | To do | |
@@ -48,6 +48,7 @@ assembly, its only user, does. See [the Metal findings](third_party_in_modules.m
 
 ## Findings outside the checklist
 
-- **Importers must include the std headers they use.** A module's global module fragment doesn't
-  make those declarations visible to importers: comparing `std::string`s in a file that only
-  imports `nom.example` fails until it includes `<string>`.
+- **Importers must make standard-library declarations visible themselves.** Use `import std;`
+  in a consumer that uses standard-library declarations. A library's global module fragment
+  and ordinary `import std;` do not re-export those names to consumers. Standard macros still
+  require their headers, such as `<cassert>` for `assert`.

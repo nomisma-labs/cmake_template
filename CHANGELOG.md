@@ -7,6 +7,11 @@ A release's `### Upgrade` section lists the steps derived repos take by hand; `t
 
 ## [Unreleased]
 
+### Fixed
+
+- Align the conventions guide and lab checklist with the implemented `import std;` support
+  and clarify standard-library visibility and macro headers in importing consumers.
+
 ## [0.11.2] - 2026-10-28
 
 ### Added
