@@ -7,6 +7,18 @@ A release's `### Upgrade` section lists the steps derived repos take by hand; `t
 
 ## [Unreleased]
 
+### Changed
+
+- `nom_app(<name>)` creates the target `<name>` directly, matching `nom_lib()`. Callers can
+  apply target properties without reconstructing a project prefix; binary names stay the same.
+
+### Upgrade
+
+- Replace references to app targets `<project>_<name>` with `<name>` in target settings,
+  generator expressions, test commands and explicit build commands. If enabled apps or other
+  targets share a name in one build, choose distinct names in their `nom_app()` calls; use
+  `OUTPUT_NAME` when the binary should retain its previous name.
+
 ## [0.11.0] - 2026-10-17
 
 ### Changed

@@ -84,7 +84,7 @@ def main() -> None:
 
             check_install()
             if preset == 'dev':
-                run(args.cmake, '--build', str(build), '--target', 'selection_prototype')
+                run(args.cmake, '--build', str(build), '--target', 'prototype')
                 assert (build / 'bin/prototype').exists()
                 assert (build / 'config/prototype/nested/settings.json').is_file()
                 check_install()  # Explicitly built excluded apps still stay out of installation.

@@ -36,6 +36,8 @@ nom_lib(values ${{LINKAGE}} MODULES values.cppm SOURCES values.cpp
 nom_lib(flags COMPILE_OPTIONS -DNOM_INTERFACE_VALUE=7)
 nom_app(check SOURCES main_test.cxx DEPS nom::values nom::flags
     COMPILE_OPTIONS -DNOM_CONFIG_APP=mm_strategy -Werror)
+target_compile_definitions(check PRIVATE NOM_DIRECT_APP_VALUE=11)
+set_target_properties(check PROPERTIES OUTPUT_NAME configured_check)
 ''')
         # -include is a general compiler option with a separate argument containing spaces.
         (source / 'forced.h').write_text('#define NOM_FORCED_VALUE 1\n')
@@ -57,6 +59,7 @@ import nom.option_values;
 #define NOM_STRINGIFY_IMPL(Value) #Value
 #define NOM_STRINGIFY(Value) NOM_STRINGIFY_IMPL(Value)
 static_assert(NOM_INTERFACE_VALUE == 7);
+static_assert(NOM_DIRECT_APP_VALUE == 11);
 static_assert(std::string_view(NOM_STRINGIFY(NOM_CONFIG_APP)) == "mm_strategy");
 int main() { return option_value() == 43 ? 0 : 1; }
 ''')
@@ -65,9 +68,9 @@ int main() { return option_value() == 43 ? 0 : 1; }
             run(args.cmake, '-S', str(source), '-B', str(build), '-G', args.generator,
                 f'-DCMAKE_CXX_COMPILER={args.compiler}', f'-DLINKAGE={linkage}',
                 '-DCOMPILE_OPTIONS_BUILD_TESTS=OFF', '-DCOMPILE_OPTIONS_INSTALL=OFF')
-            run(args.cmake, '--build', str(build), '--parallel', '2')
-            run(str(build / 'bin/check'))
-            print(f'PASS: {linkage.lower()} library, interface options and app stringification')
+            run(args.cmake, '--build', str(build), '--target', 'check', '--parallel', '2')
+            run(str(build / 'bin/configured_check'))
+            print(f'PASS: {linkage.lower()} library, interface options, app stringification and direct target settings')
 
 
 if __name__ == '__main__':

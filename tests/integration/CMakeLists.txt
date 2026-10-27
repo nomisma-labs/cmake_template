@@ -6,7 +6,7 @@
 # template-only:begin
 nom_library_usage_tests(library_usage)
 # The app build must collect its source config into the common build/config tree.
-if(TARGET ${PROJECT_NAME}_hello)
+if(TARGET hello)
     add_test(NAME ${PROJECT_NAME}_collected_config
         COMMAND ${CMAKE_COMMAND} -E compare_files
             ${PROJECT_SOURCE_DIR}/apps/hello/config/settings.json
@@ -22,12 +22,12 @@ if(TARGET ${PROJECT_NAME}_hello)
     endif()
 endif()
 # The Boost example writes its settings gzip-compressed, then reads them back.
-if(TARGET ${PROJECT_NAME}_boost_example)
+if(TARGET boost_example)
     set(boost_example_settings ${CMAKE_CURRENT_BINARY_DIR}/boost_example/settings.json.gz)
     add_test(NAME ${PROJECT_NAME}_boost_example_write
-        COMMAND ${PROJECT_NAME}_boost_example --name lab --repeat 2 --gzip ${boost_example_settings})
+        COMMAND boost_example --name lab --repeat 2 --gzip ${boost_example_settings})
     add_test(NAME ${PROJECT_NAME}_boost_example_read
-        COMMAND ${PROJECT_NAME}_boost_example --settings ${boost_example_settings})
+        COMMAND boost_example --settings ${boost_example_settings})
     set_tests_properties(${PROJECT_NAME}_boost_example_write PROPERTIES
         FIXTURES_SETUP ${PROJECT_NAME}_boost_settings LABELS integration)
     set_tests_properties(${PROJECT_NAME}_boost_example_read PROPERTIES
