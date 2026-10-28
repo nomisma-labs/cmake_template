@@ -1,7 +1,5 @@
 # SPDX-FileCopyrightText: 2026 Alexey Tkachenko
 # SPDX-License-Identifier: LicenseRef-Nomisma-Labs-Proprietary
 
-nom_app(boost_example SOURCES main.cpp
+nom_app(boost_example IMPORT_STD SOURCES main.cpp
     DEPS nom::example Boost::program_options Boost::filesystem Boost::iostreams)
-
-nom_enable_std_modules(boost_example)

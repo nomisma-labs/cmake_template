@@ -6,7 +6,7 @@ set(example_linkage)
 if(nom_build_python)
     set(example_linkage SHARED)
 endif()
-nom_lib(example ${example_linkage}
+nom_lib(example IMPORT_STD ${example_linkage}
     SOURCES
         counter.cpp
         settings.cpp
@@ -19,7 +19,5 @@ nom_lib(example ${example_linkage}
         settings.cppm
         types.cppm
     PRIVATE_DEPS nlohmann_json::nlohmann_json)
-
-nom_enable_std_modules(example)
 
 nom_install_package(TARGETS example DEPENDENCIES nlohmann_json)

@@ -68,11 +68,13 @@ ctest --preset ci -R python_package --output-on-failure
 ```
 ## Standard-library module review
 
-The examples use C++23 `import std;` with CMake 4.4.x and the shared
-[`nom_enable_std_modules`](cmake/kit/std_modules.cmake) helper. The focused
+The examples use C++23 `import std;` with CMake 4.4.x and `IMPORT_STD` in the shared
+target helpers. The focused
 [test](tests/kit/std_modules/std_modules_test.cxx) covers standard containers and algorithms
 across a module/implementation boundary, template instantiation in the consumer, and Catch2
-macro headers alongside imports. The existing library usage tests cover both `FetchContent`
+macro headers alongside imports. The [option checks](tests/kit/std_modules/check_test.py)
+exercise interface-library diagnostics and experimental-warning selection through real presets.
+The existing library usage tests cover both `FetchContent`
 and installed-package consumers. Setup and limitations are in [the build guide](docs/kit/build.md#modules).
 
 ```sh

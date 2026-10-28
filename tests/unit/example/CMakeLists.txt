@@ -1,11 +1,9 @@
 # SPDX-FileCopyrightText: 2026 Alexey Tkachenko
 # SPDX-License-Identifier: LicenseRef-Nomisma-Labs-Proprietary
 
-nom_c2test(tests
+nom_c2test(tests IMPORT_STD
     SOURCES
         counter_test.cxx
         join_test.cxx
         settings_test.cxx
     DEPS nom::example)
-
-nom_enable_std_modules(${PROJECT_NAME}_tests)

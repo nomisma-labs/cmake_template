@@ -3,15 +3,11 @@
 #
 # Lab item 1: a native module (no headers) with a partition.
 
-nom_lib(${PROJECT_NAME}_sandbox_geometry
+nom_lib(${PROJECT_NAME}_sandbox_geometry IMPORT_STD
     MODULES geometry.cppm point.cppm
     BASE_DIR ${CMAKE_CURRENT_SOURCE_DIR})
-
-nom_enable_std_modules(${PROJECT_NAME}_sandbox_geometry)
 
 # Build the experiment's support library only when its app is requested.
 set_target_properties(${PROJECT_NAME}_sandbox_geometry PROPERTIES EXCLUDE_FROM_ALL TRUE)
 
-nom_app(sandbox_native_module SOURCES main.cpp DEPS ${PROJECT_NAME}_sandbox_geometry BUILD_FOR complete)
-
-nom_enable_std_modules(sandbox_native_module)
+nom_app(sandbox_native_module IMPORT_STD SOURCES main.cpp DEPS ${PROJECT_NAME}_sandbox_geometry BUILD_FOR complete)

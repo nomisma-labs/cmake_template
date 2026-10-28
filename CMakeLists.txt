@@ -7,7 +7,7 @@ include(cmake/kit/std_modules.cmake)
 
 # The version lives only here; releases are tagged v<version> (docs/kit/build.md#versioning).
 project(cmake_template
-    VERSION 0.11.2
+    VERSION 0.12.0
     DESCRIPTION "Nomisma C++ repository template and build-system lab"
     LANGUAGES CXX)
 

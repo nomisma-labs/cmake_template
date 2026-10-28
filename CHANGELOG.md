@@ -7,6 +7,25 @@ A release's `### Upgrade` section lists the steps derived repos take by hand; `t
 
 ## [Unreleased]
 
+## [0.12.0] - 2026-10-28
+
+### Added
+
+- `IMPORT_STD` on `nom_lib`, `nom_app`, `nom_c2test`, and `nom_python_module` enables
+  standard-library modules within the helper and respects disabled optional targets.
+
+### Changed
+
+- Shared configure presets use schema version 12 and suppress only experimental-feature
+  warnings; other developer warnings retain their defaults.
+- Example targets use `IMPORT_STD` instead of separate standard-library module setup calls.
+
+### Upgrade
+
+- Replace separate `nom_enable_std_modules()` calls for kit-created targets with `IMPORT_STD`
+  in the target declaration. Keep direct calls for targets created outside the kit.
+  The pre-project `std_modules.cmake` include is still required.
+
 ### Fixed
 
 - Align the conventions guide and lab checklist with the implemented `import std;` support
