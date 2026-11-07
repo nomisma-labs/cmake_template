@@ -7,7 +7,7 @@ include(cmake/kit/std_modules.cmake)
 
 # The version lives only here; releases are tagged v<version> (docs/kit/build.md#versioning).
 project(cmake_template
-    VERSION 0.12.0
+    VERSION 0.13.0
     DESCRIPTION "Nomisma C++ repository template and build-system lab"
     LANGUAGES CXX)
 
@@ -34,7 +34,7 @@ if(nom_build_tests)
     nom_find_catch2()
 endif()
 
-add_subdirectory(core)
+add_subdirectory(src)
 
 # template-only:begin
 if(nom_build_python)

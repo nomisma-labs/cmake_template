@@ -99,7 +99,7 @@ they cannot use. `.clangd` selects the Clang database for the editor.
 
 `tools/kit/checks/naming.sh` configures the `clang` preset with `-DNOM_BUILD_PRESET=complete`, then
 builds it so that module BMIs are available, including those used by sandbox apps. It runs
-`run-clang-tidy-22` over the native module units and importers in `core/`, `apps/` and `tests/`
+`run-clang-tidy-22` over the native module units and importers in `src/`, `apps/` and `tests/`
 using that database. The naming check passes for the current native-module example and
 generated-repository recipe.
 

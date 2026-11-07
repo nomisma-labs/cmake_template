@@ -33,7 +33,7 @@ On GitHub, "Use this template" (or `gh repo create --template`), then
 The CMake project and installed package are named `cmake_template`. The illustrative library
 is named `example` (`nom::example`); its code and tests exercise the build system.
 
-- **Example library `example`** (`core/example/`): the native named module `nom.example`, with
+- **Example library `example`** (`src/example/`): the native named module `nom.example`, with
   interface partitions, a template, compiled implementation units, a config-like type, and a
   macro header. JSON parsing uses a third-party header behind the module API.
 - **Apps:** `hello` through `import nom.example;`

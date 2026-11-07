@@ -68,8 +68,8 @@ def main() -> None:
         git(repo, 'add', '--all')
         git(repo, 'commit', '--quiet', '-m', 'Add the hooks')
         git(repo, 'config', 'core.hooksPath', 'tools/kit/hooks')
-        (repo / 'core').mkdir()
-        one, two = repo / 'core/one.cpp', repo / 'core/two.cpp'
+        (repo / 'src').mkdir()
+        one, two = repo / 'src/one.cpp', repo / 'src/two.cpp'
 
         # A formatted file with its header commits.
         one.write_text(cpp('int one( ){return 1;}\n', clang_format))
@@ -83,13 +83,13 @@ def main() -> None:
         result = commit(repo, '-m', 'Add two')
         check(result.returncode == 1 and git(repo, 'log', '-1', '--format=%s') == 'Add one',
               'an unformatted file was committed', result)
-        check(said(result, '-int  two( ){return 2;}', '+int two()', '-i core/two.cpp && git add core/two.cpp',
+        check(said(result, '-int  two( ){return 2;}', '+int two()', '-i src/two.cpp && git add src/two.cpp',
                    'pre-commit (formatting)'), 'the rejection lacks the diff or the fix', result)
 
         # Fixing only the working copy doesn't help: the staged copy is what the commit gets.
         two.write_text(cpp('int two( ){return 2;}\n', clang_format))
         result = commit(repo, '-m', 'Add two')
-        check(result.returncode == 1 and said(result, 'git add -p core/two.cpp'),
+        check(result.returncode == 1 and said(result, 'git add -p src/two.cpp'),
               'a commit passed on its working copy, or the fix ignores the unstaged changes', result)
         git(repo, 'add', '--all')
         result = commit(repo, '-m', 'Add two')
@@ -101,7 +101,7 @@ def main() -> None:
         one.write_text(one.read_text() + 'int  four( ){return 4;}\n')
         result = commit(repo, '-m', 'Add three')
         check(result.returncode == 0, 'an unstaged change stopped the commit', result)
-        check(git(repo, 'diff', '--name-only') == 'core/one.cpp', 'the unstaged change is gone', result)
+        check(git(repo, 'diff', '--name-only') == 'src/one.cpp', 'the unstaged change is gone', result)
 
         # commit -a stages the working copies first, and a rejection leaves nothing staged.
         result = commit(repo, '-a', '-m', 'Add four')
@@ -114,7 +114,7 @@ def main() -> None:
         check(result.returncode == 0, 'commit -a of formatted files was rejected', result)
 
         # Deleted files have nothing to check.
-        git(repo, 'rm', '--quiet', 'core/two.cpp')
+        git(repo, 'rm', '--quiet', 'src/two.cpp')
         result = commit(repo, '-m', 'Remove two')
         check(result.returncode == 0, 'a deletion was rejected', result)
 

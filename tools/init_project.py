@@ -27,7 +27,7 @@ ROOT = Path(__file__).resolve().parent.parent
 TEMPLATE_PROJECT = "cmake_template"
 # The example code, the lab and the template-only files. Every path must exist.
 REMOVED = [
-    "core/example",
+    "src/example",
     "apps/hello",
     "apps/boost_example",
     "tests/unit/example",

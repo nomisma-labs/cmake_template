@@ -48,6 +48,14 @@ add_test(NAME ${PROJECT_NAME}_compile_options
         --kit ${PROJECT_SOURCE_DIR}/cmake/kit)
 set_tests_properties(${PROJECT_NAME}_compile_options PROPERTIES LABELS kit)
 
+add_test(NAME ${PROJECT_NAME}_source_layout
+    COMMAND ${Python3_EXECUTABLE} ${CMAKE_CURRENT_SOURCE_DIR}/source_layout/check.py
+        --cmake ${CMAKE_COMMAND}
+        --compiler ${CMAKE_CXX_COMPILER}
+        --generator "${CMAKE_GENERATOR}"
+        --kit ${PROJECT_SOURCE_DIR}/cmake/kit)
+set_tests_properties(${PROJECT_NAME}_source_layout PROPERTIES LABELS kit)
+
 add_test(NAME ${PROJECT_NAME}_boost_package
     COMMAND ${Python3_EXECUTABLE} ${CMAKE_CURRENT_SOURCE_DIR}/boost_package/check.py
         --cmake ${CMAKE_COMMAND}

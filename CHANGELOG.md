@@ -7,6 +7,27 @@ A release's `### Upgrade` section lists the steps derived repos take by hand; `t
 
 ## [Unreleased]
 
+## [0.13.0] - 2026-11-08
+
+### Changed
+
+- The template and new repositories use `src/<component>/` for libraries. `nom_lib` defaults `BASE_DIR`
+  to `${PROJECT_SOURCE_DIR}/src`; explicit overrides remain supported. Initialization, naming
+  checks, sandbox-library discovery and documentation use the same layout. Module, target,
+  public include and installed paths remain unchanged.
+
+### Upgrade
+
+- Move repository-owned library sources from `core/` to `src/`, update the root
+  `add_subdirectory(core)` call and any explicit source paths. Kit synchronization only
+  transfers shared infrastructure; it does not move sources or edit repository-owned CMake files.
+- Migrate and repin internal source dependencies together with their consumers. The outermost
+  kit supplies helpers for the whole build: dependencies still using `core/` need migrated
+  sources or an explicit `BASE_DIR` before they can use the new default.
+- Recreate build trees and compilation databases after migration, then validate source and
+  installed-package consumers. Applications remain in `apps/`, documentation in `docs/<repo>/`
+  and tools in `tools/<repo>/`.
+
 ## [0.12.0] - 2026-10-28
 
 ### Added
