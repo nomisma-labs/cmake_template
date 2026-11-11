@@ -1,5 +1,5 @@
 # SPDX-FileCopyrightText: 2026 Alexey Tkachenko
-# SPDX-License-Identifier: LicenseRef-Nomisma-Labs-Proprietary
+# SPDX-License-Identifier: MIT
 #
 # Template only: builds docker/ci/Dockerfile and publishes ghcr.io/<owner>/ci for every repo's
 # ci.yml. After the first run, make the package public (docs/kit/new_repo.md).

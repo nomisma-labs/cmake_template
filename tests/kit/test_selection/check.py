@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 # SPDX-FileCopyrightText: 2026 Alexey Tkachenko
-# SPDX-License-Identifier: LicenseRef-Nomisma-Labs-Proprietary
+# SPDX-License-Identifier: MIT
 """Check the labels that select tests in a build tree.
 
 nom_c2test() labels its suite unit unless LABELS replaces that, and sets PROPERTIES on the test.

@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 # SPDX-FileCopyrightText: 2026 Alexey Tkachenko
-# SPDX-License-Identifier: LicenseRef-Nomisma-Labs-Proprietary
+# SPDX-License-Identifier: MIT
 """Check tools/kit/sync_template.py on a scratch template and scratch repos made from it.
 
 The template's v1.1.0 updates, moves, deletes and adds template-owned files and has an upgrade

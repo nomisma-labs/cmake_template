@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 # SPDX-FileCopyrightText: 2026 Alexey Tkachenko
-# SPDX-License-Identifier: LicenseRef-Nomisma-Labs-Proprietary
+# SPDX-License-Identifier: MIT
 """Check tools/kit/hooks on a scratch repo that has the hooks, the checks they run and .clang-format.
 
 The scratch repo points core.hooksPath at tools/kit/hooks, as ./bootstrap.sh does, so each commit
@@ -16,9 +16,11 @@ from tempfile import TemporaryDirectory
 
 IDENTITY = ['-c', 'user.name=Hooks Test', '-c', 'user.email=hooks@example.com', '-c', 'init.defaultBranch=master']
 HEADER = ('SPDX-FileCopyrightText: 2026 Alexey Tkachenko\n'
-          'SPDX-License-Identifier: LicenseRef-Nomisma-Labs-Proprietary\n')
+          'SPDX-License-Identifier: MIT\n')
 COPIED = ['.clang-format', 'tools/kit/hooks/pre-commit', 'tools/kit/hooks/commit-msg',
-          'tools/kit/checks/format.sh', 'tools/kit/checks/headers.py']
+          'tools/kit/checks/format.sh', 'tools/kit/checks/headers.py',
+          'tools/kit/project_license.py', 'tools/kit/sync_template.py',
+          'project_license.json', 'LICENSE', 'cmake/kit/LICENSE']
 
 
 def git(repo: Path, *args: str) -> str:

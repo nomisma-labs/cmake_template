@@ -5,6 +5,13 @@ The template every Nomisma C++ repo is created from, and the lab where build-sys
 features (modules first) are tried before real repos rely on them.
 <!-- repo-description:end -->
 
+## Licensing
+
+The project's license is in [LICENSE](LICENSE), with its default for new files recorded in
+[project_license.json](project_license.json). Copied toolchain and scaffold material retains
+MIT; its notice is in [cmake/kit/LICENSE](cmake/kit/LICENSE). Third-party dependencies retain
+their own licenses. See [license selection](docs/kit/new_repo.md#licensing).
+
 ## Build
 
 Install the tools listed in [docs/kit/build.md](docs/kit/build.md#toolchain), then:
@@ -25,8 +32,18 @@ app, tests or a dependency: [docs/kit/howto.md](docs/kit/howto.md). Releases: [C
 ## A new repo from the template
 
 On GitHub, "Use this template" (or `gh repo create --template`), then
-`python3 tools/init_project.py <name>`, which removes the example code and the lab. See
+`python3 tools/init_project.py <name> --license MIT` (or `SUL-1.0` or `proprietary`),
+which removes the example code and the lab. This template itself is MIT licensed. See
 [docs/kit/new_repo.md](docs/kit/new_repo.md).
+
+Test all three choices without creating GitHub repositories:
+
+```bash
+python3 tests/kit/project_license/check.py --source .
+```
+
+The test uses temporary local repositories, builds a generated app, verifies licensing and
+sync preservation, and removes its scratch directories. It also runs in the `complete` kit tests.
 
 ## What's inside
 

@@ -1,5 +1,5 @@
 // SPDX-FileCopyrightText: 2026 Alexey Tkachenko
-// SPDX-License-Identifier: LicenseRef-Nomisma-Labs-Proprietary
+// SPDX-License-Identifier: MIT
 
 // Import standard declarations used directly, as well as the library module.
 

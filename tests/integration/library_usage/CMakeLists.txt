@@ -1,5 +1,5 @@
 # SPDX-FileCopyrightText: 2026 Alexey Tkachenko
-# SPDX-License-Identifier: LicenseRef-Nomisma-Labs-Proprietary
+# SPDX-License-Identifier: MIT
 #
 # A separate project that uses example the way another repo would. nom_library_usage_tests()
 # in tests/integration/CMakeLists.txt builds it in both modes; it is not part of the main build.

@@ -1,5 +1,5 @@
 # SPDX-FileCopyrightText: 2026 Alexey Tkachenko
-# SPDX-License-Identifier: LicenseRef-Nomisma-Labs-Proprietary
+# SPDX-License-Identifier: MIT
 
 [build-system]
 requires = ["scikit-build-core==0.11.6"]
@@ -10,7 +10,7 @@ name = "nomisma-cmake-example"
 dynamic = ["version"]
 description = "Native Python packaging example for the Nomisma CMake template"
 requires-python = ">=3.10"
-license = "LicenseRef-Nomisma-Labs-Proprietary"
+license = "MIT"
 license-files = ["LICENSE", "external/nlohmann_json/LICENSE.MIT"]
 
 [tool.scikit-build]

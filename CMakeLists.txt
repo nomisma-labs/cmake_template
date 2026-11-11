@@ -1,5 +1,5 @@
 # SPDX-FileCopyrightText: 2026 Alexey Tkachenko
-# SPDX-License-Identifier: LicenseRef-Nomisma-Labs-Proprietary
+# SPDX-License-Identifier: MIT
 
 cmake_minimum_required(VERSION 4.4)
 
@@ -7,7 +7,7 @@ include(cmake/kit/std_modules.cmake)
 
 # The version lives only here; releases are tagged v<version> (docs/kit/build.md#versioning).
 project(cmake_template
-    VERSION 0.13.0
+    VERSION 0.14.0
     DESCRIPTION "Nomisma C++ repository template and build-system lab"
     LANGUAGES CXX)
 

@@ -1,5 +1,5 @@
 # SPDX-FileCopyrightText: 2026 Alexey Tkachenko
-# SPDX-License-Identifier: LicenseRef-Nomisma-Labs-Proprietary
+# SPDX-License-Identifier: MIT
 
 [build-system]
 requires = ["scikit-build-core==0.11.6"]
@@ -9,6 +9,8 @@ build-backend = "scikit_build_core.build"
 name = "nomisma-imported-example"
 dynamic = ["version"]
 requires-python = ">=3.10"
+license = "MIT"
+license-files = ["LICENSE"]
 
 [tool.scikit-build]
 cmake.version = ">=3.30"

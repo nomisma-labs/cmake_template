@@ -1,5 +1,5 @@
 # SPDX-FileCopyrightText: 2026 Alexey Tkachenko
-# SPDX-License-Identifier: LicenseRef-Nomisma-Labs-Proprietary
+# SPDX-License-Identifier: MIT
 #
 # Template only: jobs that check cmake_template itself. tools/init_project.py removes this
 # workflow from new repos; the template-owned ci.yml runs everywhere.

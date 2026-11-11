@@ -1,5 +1,5 @@
 # SPDX-FileCopyrightText: 2026 Alexey Tkachenko
-# SPDX-License-Identifier: LicenseRef-Nomisma-Labs-Proprietary
+# SPDX-License-Identifier: MIT
 #
 # CI image for all Nomisma repos: the toolchain from docs/kit/build.md. Built and published by
 # .github/workflows/ci_image.yml.

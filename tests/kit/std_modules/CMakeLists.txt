@@ -1,5 +1,5 @@
 # SPDX-FileCopyrightText: 2026 Alexey Tkachenko
-# SPDX-License-Identifier: LicenseRef-Nomisma-Labs-Proprietary
+# SPDX-License-Identifier: MIT
 
 # Exercise std imports across interface, implementation and Catch2 consumer boundaries.
 nom_lib(${PROJECT_NAME}_std_module_probe IMPORT_STD STATIC

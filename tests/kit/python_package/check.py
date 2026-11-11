@@ -1,5 +1,5 @@
 # SPDX-FileCopyrightText: 2026 Alexey Tkachenko
-# SPDX-License-Identifier: LicenseRef-Nomisma-Labs-Proprietary
+# SPDX-License-Identifier: MIT
 
 """Build and install native wheels without access to their original native libraries."""
 
@@ -65,6 +65,12 @@ def check_artifact(wheel, distribution, package, library, version):
         wheel_metadata = Parser().parsestr(archive.read(wheel_name).decode())
         if metadata["Name"] != distribution or metadata["Version"] != version:
             raise AssertionError(f"Unexpected package metadata: {metadata}")
+        if metadata["License-Expression"] != "MIT":
+            raise AssertionError(f"Expected MIT package metadata: {metadata}")
+        notices = [name for name in names if ".dist-info/licenses/" in name]
+        if not any(b"Copyright (c) 2026 Alexey Tkachenko" in archive.read(name)
+                   and b"Permission is hereby granted" in archive.read(name) for name in notices):
+            raise AssertionError("Wheel lacks the Nomisma MIT notice")
         if wheel_metadata["Root-Is-Purelib"] != "false":
             raise AssertionError("A native wheel must not be marked as pure Python")
         _, python_tag, abi_tag, platform_tag = wheel.stem.rsplit("-", 3)

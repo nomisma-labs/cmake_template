@@ -1,9 +1,9 @@
 #!/usr/bin/env python3
 # SPDX-FileCopyrightText: 2026 Alexey Tkachenko
-# SPDX-License-Identifier: LicenseRef-Nomisma-Labs-Proprietary
+# SPDX-License-Identifier: MIT
 """Turns a fresh copy of cmake_template into a new, empty repo.
 
-    python3 tools/init_project.py <name> [--template-url <url>] [--no-commit]
+    python3 tools/init_project.py <name> --license MIT|SUL-1.0|proprietary [--template-url <url>] [--no-commit]
 
 Run it once, right after creating the repo from the template (docs/kit/new_repo.md). It deletes the
 template's example code, lab and template-only files instead of renaming them, so the new repo
@@ -15,15 +15,19 @@ a fresh copy of the template.
 """
 
 import argparse
+import json
 import re
 import shutil
 import subprocess
 import sys
 from pathlib import Path
 
-from kit.sync_template import TEMPLATE_OWNED, read_template_ref, write_template_ref
-
 ROOT = Path(__file__).resolve().parent.parent
+sys.path.insert(0, str(ROOT))
+
+from tools.kit.project_license import LICENSES, POLICY_FILE, load_policy, parse_policy, project_license_text
+from tools.kit.sync_template import TEMPLATE_OWNED, read_template_ref, write_template_ref
+
 TEMPLATE_PROJECT = "cmake_template"
 # The example code, the lab and the template-only files. Every path must exist.
 REMOVED = [
@@ -131,7 +135,7 @@ def start_changelog(text: str) -> str:
     return preamble.rstrip("\n") + "\n\n## [Unreleased]\n"
 
 
-def planned_edits(name: str) -> dict[str, str]:
+def planned_edits(name: str, license_choice: str, copyright_text: str | None) -> dict[str, str]:
     """The new text of every file that changes, worked out before anything is touched."""
     edits = {}
     for relative in git("ls-files").splitlines():
@@ -156,6 +160,18 @@ def planned_edits(name: str) -> dict[str, str]:
     edit("AGENTS.md", lambda text: set_description("AGENTS.md", text,
                                                    f"TODO: what `{name}` is and what it depends on."))
     edit("CHANGELOG.md", start_changelog)
+    # Keep copied scaffold material MIT even when new project code has different terms.
+    # These files belong to the new repo after initialization; sync must not replace them.
+    inherited = [relative for relative in git("ls-files").splitlines()
+                 if not is_removed(relative) and not is_template_owned(relative)
+                 and relative not in ("LICENSE", POLICY_FILE, ".template_ref", ".gitmodules")
+                 and (ROOT / relative).is_file()]
+    policy = {"license": LICENSES[license_choice],
+              "copyright": load_policy(ROOT)["copyright"] if copyright_text is None else copyright_text,
+              "mit_files": sorted(inherited)}
+    edits[POLICY_FILE] = json.dumps(policy, indent=2) + "\n"
+    parse_policy(edits[POLICY_FILE])
+    edits["LICENSE"] = project_license_text(ROOT, policy)
     return edits
 
 
@@ -179,14 +195,16 @@ def remove_template_content() -> None:
 def main() -> int:
     parser = argparse.ArgumentParser(description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter)
     parser.add_argument("name", help="snake_case repo name, for example assembly")
+    parser.add_argument("--license", required=True, choices=LICENSES, help="license for new project code")
+    parser.add_argument("--copyright", help="copyright year(s) and holder; defaults to the template's selection")
     parser.add_argument("--template-url", help="template repo (default: url in .template_ref)")
     parser.add_argument("--no-commit", action="store_true", help="leave the changes uncommitted")
     args = parser.parse_args()
 
     try:
         check_fresh_copy(args.name)
-        edits = planned_edits(args.name)
-    except InitError as error:
+        edits = planned_edits(args.name, args.license, args.copyright)
+    except (InitError, ValueError, OSError) as error:
         print(f"error: {error}; nothing was changed", file=sys.stderr)
         return 1
 

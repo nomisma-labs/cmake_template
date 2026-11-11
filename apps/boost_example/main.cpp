@@ -1,5 +1,5 @@
 // SPDX-FileCopyrightText: 2026 Alexey Tkachenko
-// SPDX-License-Identifier: LicenseRef-Nomisma-Labs-Proprietary
+// SPDX-License-Identifier: MIT
 
 // Usage: boost_example [--settings <file>] [--name <name>] [--repeat <n>] [--gzip <file>]
 // Boost parses the options, checks and creates paths, and reads and writes gzip-compressed

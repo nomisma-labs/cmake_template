@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 # SPDX-FileCopyrightText: 2026 Alexey Tkachenko
-# SPDX-License-Identifier: LicenseRef-Nomisma-Labs-Proprietary
+# SPDX-License-Identifier: MIT
 """Build libraries under src/, then consume their relocated installed package."""
 
 import argparse
@@ -92,6 +92,9 @@ int derived_value() { return value() + 20; }
         run(args.cmake, '--build', str(build), '--parallel', '2')
         run(str(build / 'bin/check'))
         run(args.cmake, '--install', str(build), '--prefix', str(prefix))
+        notice = prefix / 'lib/cmake/source_layout/LICENSE-MIT.txt'
+        if notice.read_text() != (Path(args.kit) / 'LICENSE').read_text():
+            raise RuntimeError('The installed package lost the generated config file\'s MIT notice')
         expected = {
             'values/macros.h', 'values/values.cppm',
             'group/derived_values/macros.h', 'group/derived_values/derived_values.cppm',
@@ -131,7 +134,8 @@ nom_app(check SOURCES main.cpp DEPS nom::values nom::derived_values nom::custom_
             if has_library:
                 (repo / 'src/sandbox_example').mkdir(parents=True)
             (repo / 'apps/sandbox').mkdir(parents=True)
-            for relative in ('tools/kit/add_sandbox_app.py', 'tools/kit/checks/headers.py'):
+            for relative in ('tools/kit/add_sandbox_app.py', 'tools/kit/project_license.py',
+                             'tools/kit/sync_template.py', 'project_license.json'):
                 destination = repo / relative
                 destination.parent.mkdir(parents=True, exist_ok=True)
                 shutil.copy2(kit.parents[1] / relative, destination)

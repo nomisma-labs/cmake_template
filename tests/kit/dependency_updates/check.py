@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 # SPDX-FileCopyrightText: 2026 Alexey Tkachenko
-# SPDX-License-Identifier: LicenseRef-Nomisma-Labs-Proprietary
+# SPDX-License-Identifier: MIT
 """Check tools/kit/checks/dependency_updates.py on scratch repos, without a network.
 
 An upstream repo has releases v1.0.0 (an annotated tag) and v1.1.0, a pre-release and a newer

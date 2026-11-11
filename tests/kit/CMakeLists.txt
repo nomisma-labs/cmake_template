@@ -1,5 +1,5 @@
 # SPDX-FileCopyrightText: 2026 Alexey Tkachenko
-# SPDX-License-Identifier: LicenseRef-Nomisma-Labs-Proprietary
+# SPDX-License-Identifier: MIT
 
 # Tests of the shared kit and tools themselves, labeled kit. Most build throwaway projects or
 # repos with this build's compiler; std_modules exercises targets directly in this build.
@@ -82,6 +82,12 @@ add_test(NAME ${PROJECT_NAME}_template_sync
     COMMAND ${Python3_EXECUTABLE} ${CMAKE_CURRENT_SOURCE_DIR}/template_sync/check.py
         --script ${PROJECT_SOURCE_DIR}/tools/kit/sync_template.py)
 set_tests_properties(${PROJECT_NAME}_template_sync PROPERTIES LABELS kit)
+
+add_test(NAME ${PROJECT_NAME}_project_license
+    COMMAND ${Python3_EXECUTABLE} ${CMAKE_CURRENT_SOURCE_DIR}/project_license/check.py
+        --source ${PROJECT_SOURCE_DIR} --cmake ${CMAKE_COMMAND}
+        --compiler ${CMAKE_CXX_COMPILER} --generator "${CMAKE_GENERATOR}")
+set_tests_properties(${PROJECT_NAME}_project_license PROPERTIES LABELS kit TIMEOUT 180)
 
 if(UNIX)
     add_test(NAME ${PROJECT_NAME}_git_hooks

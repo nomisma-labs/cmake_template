@@ -1,5 +1,5 @@
 # SPDX-FileCopyrightText: 2026 Alexey Tkachenko
-# SPDX-License-Identifier: LicenseRef-Nomisma-Labs-Proprietary
+# SPDX-License-Identifier: MIT
 
 cmake_minimum_required(VERSION 3.30)
 project(imported_wheel VERSION 1.0.0 LANGUAGES CXX)

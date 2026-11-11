@@ -7,6 +7,31 @@ A release's `### Upgrade` section lists the steps derived repos take by hand; `t
 
 ## [Unreleased]
 
+## [0.14.0] - 2026-11-11
+
+### Changed
+
+- License the template, shared kit and examples under MIT, retaining Alexey Tkachenko's
+  copyright. Third-party dependencies retain their own licenses.
+- Require an explicit MIT, SUL 1.0 or proprietary choice during repository initialization.
+  The repository-owned `project_license.json` controls notices for new files; copied scaffold
+  and kit material retains MIT. Synchronization preserves project licensing.
+- Generate sandbox notices from the project selection and check SPDX license values, including
+  staged policy changes. Installed package configs carry their MIT license text.
+
+### Added
+
+- Local initialization/generation/build/synchronization regression checks for all three licenses,
+  using disposable repositories without GitHub access or workspace registration.
+
+### Upgrade
+
+- Existing consumers must add `project_license.json` with their current license and copyright,
+  and any repository-owned MIT files. Keep the existing project license unless intentionally
+  relicensing it. Follow [license selection](docs/kit/new_repo.md#licensing).
+- Synchronize the shared MIT kit and its notice together. This does not relicense older
+  revisions or other files left in a consumer repository.
+
 ## [0.13.0] - 2026-11-08
 
 ### Changed
