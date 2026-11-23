@@ -85,7 +85,7 @@ ctest --preset ci -R python_package --output-on-failure
 ```
 ## Standard-library module review
 
-The examples use C++23 `import std;` with CMake 4.4.x and `IMPORT_STD` in the shared
+The examples use C++23 `import std;` with CMake 4.4 or newer and `IMPORT_STD` in the shared
 target helpers. The focused
 [test](tests/kit/std_modules/std_modules_test.cxx) covers standard containers and algorithms
 across a module/implementation boundary, template instantiation in the consumer, and Catch2

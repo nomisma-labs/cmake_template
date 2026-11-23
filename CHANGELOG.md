@@ -7,6 +7,13 @@ A release's `### Upgrade` section lists the steps derived repos take by hand; `t
 
 ## [Unreleased]
 
+## [0.14.1] - 2026-11-24
+
+### Fixed
+
+- Support CMake 4.5 native `import std` scanning in kit targets and wheel builds. CMake 4.4
+  continues to use its experimental gate. The CI image definition pins CMake 4.5.0.
+
 ## [0.14.0] - 2026-11-11
 
 ### Changed

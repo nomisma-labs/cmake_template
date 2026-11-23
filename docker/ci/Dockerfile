@@ -8,7 +8,7 @@ FROM ubuntu:26.04
 ARG DEBIAN_FRONTEND=noninteractive
 # CMake comes from Kitware's apt repository at the version docs/kit/build.md records; cmake_template's
 # toolchain report names a difference between this pin and the CMake installed where it runs.
-ARG CMAKE_VERSION=4.4.4-0kitware1ubuntu26.04.1
+ARG CMAKE_VERSION=4.5.0-0kitware1ubuntu26.04.1
 # Catch2 at the release cmake/kit/deps/catch2.cmake requires, built here: Ubuntu packages an older one.
 ARG CATCH2_VERSION=3.16.1
 

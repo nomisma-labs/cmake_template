@@ -57,7 +57,9 @@ int main() { return std::vector<int>{1, 2, 3}.size() == 3 ? 0 : 1; }
         run(source, args.cmake, '--build', str(build), '--parallel', '2')
         run(source, str(build / 'bin/import_std_app'))
         verbose = run(source, args.cmake, '--preset', 'verbose')
-        assert 'CMake Warning (experimental)' in verbose, verbose
+        version = json.loads(run(source, args.cmake, '-E', 'capabilities'))['version']
+        uses_experimental_gate = (version['major'], version['minor']) == (4, 4)
+        assert ('CMake Warning (experimental)' in verbose) == uses_experimental_gate, verbose
         assert 'author warning remains enabled' in verbose, verbose
         print('PASS: IMPORT_STD app builds; presets suppress only experimental warnings')
 
