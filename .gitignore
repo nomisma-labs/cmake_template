@@ -10,3 +10,4 @@ __pycache__/
 # The lab keeps the experiments its findings cite (docs/lab/README.md).
 !/apps/sandbox/native_module/
 # template-only:end
+/review.md
