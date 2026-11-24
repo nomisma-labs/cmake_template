@@ -7,6 +7,13 @@ A release's `### Upgrade` section lists the steps derived repos take by hand; `t
 
 ## [Unreleased]
 
+## [0.14.2] - 2026-11-24
+
+### Fixed
+
+- Allow the template license test to read its selected source checkout when the CI container
+  runs under a different user ID from the checkout owner.
+
 ## [0.14.1] - 2026-11-24
 
 ### Fixed

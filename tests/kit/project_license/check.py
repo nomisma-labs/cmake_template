@@ -30,6 +30,11 @@ def git(cwd: Path, *args: str) -> str:
     return run(cwd, "git", *IDENTITY, *args).stdout.strip()
 
 
+def snapshot_entries(source: Path, *options: str) -> list[str]:
+    # A container can mount the selected source checkout under a different UID.
+    return git(source, "-c", f"safe.directory={source}", "ls-files", *options).splitlines()
+
+
 def commit(repo: Path, message: str) -> None:
     git(repo, "add", "--all")
     git(repo, "commit", "--quiet", "-m", message)
@@ -51,7 +56,7 @@ def copy_snapshot(source: Path, target: Path, names: list[str]) -> None:
     initialize_git(target)
     git(target, "add", "--all")
     # Preserve uninitialized gitlinks, as GitHub's template snapshot does.
-    for entry in git(source, "ls-files", "--stage").splitlines():
+    for entry in snapshot_entries(source, "--stage"):
         metadata, name = entry.split("\t", 1)
         mode, sha, _ = metadata.split()
         if mode == "160000":
@@ -73,7 +78,7 @@ def main() -> None:
     args = parser.parse_args()
     source = Path(args.source).resolve()
     # Include the working-tree changes being tested without committing the real template.
-    names = sorted(set(git(source, "ls-files", "--cached", "--others", "--exclude-standard").splitlines()))
+    names = sorted(set(snapshot_entries(source, "--cached", "--others", "--exclude-standard")))
     with TemporaryDirectory(prefix="nomisma-project-license-") as temporary:
         root = Path(temporary)
         upstream = root / "upstream"
@@ -83,7 +88,7 @@ def main() -> None:
         for choice, license_id in CHOICES.items():
             name = "sample_" + choice.lower().replace("-", "_").replace(".", "_")
             repo = root / name
-            copy_snapshot(upstream, repo, git(upstream, "ls-files").splitlines())
+            copy_snapshot(upstream, repo, snapshot_entries(upstream))
             command = [sys.executable, "tools/init_project.py", name, "--template-url", str(upstream)]
             # Selecting a license is mandatory, and failure must leave the snapshot intact.
             for extra in ([], ["--license", "unknown"]):
